@@ -1,87 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>About Us - OS Algorithm Simulator</title>
-  <link rel="icon" type="png" href="style/icons/top_logo.png">
-  <link rel="stylesheet" href="style/login.css">
-  <link rel="stylesheet" href="style/topbar.css">
-  <link rel="stylesheet" href="style/about-us.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-  <div class="wrapper">
-    <div class="video-container">
-      <video autoplay loop muted playsinline>
-        <source src="style/libs/bg.mp4" type="video/mp4">
-      </video>
+  <head>
+    <meta charset="UTF-8" />
+    <title>About Us - OS Algorithm Simulator</title>
+    <link rel="icon" type="png" href="style/icons/top_logo.png" />
+    <link rel="stylesheet" href="style/login.css" />
+    <link rel="stylesheet" href="style/topbar.css" />
+    <link rel="stylesheet" href="style/about-us.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="video-container">
+        <video autoplay loop muted playsinline>
+          <source src="style/libs/bg.mp4" type="video/mp4" />
+        </video>
+      </div>
+
+      <nav>
+        <div class="nav_logo">
+          <img class="ams_logo" src="style/icons/ams_logo.png" alt="" />
+          <p>AlgOS</p>
+        </div>
+        <div class="nav_menu" id="navMenu">
+          <ul>
+            <li><a href="index.html" class="link">Home</a></li>
+            <li><a href="about-us.html" class="link active">About Us</a></li>
+          </ul>
+        </div>
+        <div class="nav_button">
+          <button class="btn login_btn" id="signIn_Button2">Sign In</button>
+          <button class="btn signup_btn" id="signUp_Button2">Sign Up</button>
+        </div>
+        <div class="nav_menu_btn">
+          <i class="bx bx-menu" onclick=""></i>
+        </div>
+      </nav>
+
+      <main class="about-main">
+        <div class="logo-title">
+          <img src="style/icons/ams_logo.png" alt="Logo" />
+          <span>OS Algorithm Simulator</span>
+        </div>
+        <p class="subtitle">About Us</p>
+
+        <section class="about-section">
+          <h2 class="section-title">Developers</h2>
+          <ul class="names-list">
+            <li>Galo, Alexander Raymond C.</li>
+            <li>Nucom Jr, Noel U.</li>
+            <li>Nuqui, John Benedict P.</li>
+            <li>Santos, Kenzo S.</li>
+            <li>Tolentino, Jastien Myer Q.</li>
+            <li>Tolentino, Romiel S.</li>
+          </ul>
+        </section>
+
+        <section class="about-section">
+          <h2 class="section-title">Course Information</h2>
+          <p class="course-info">
+            <span class="label">Program / Section:</span> BSCpE - 3E<br />
+            <span class="label">Course Code:</span> CpE-OS 313<br />
+            <span class="label">Course Title:</span> Operating Systems<br />
+            <span class="label">Instructor:</span> ENGR. REGALA, JAMIE S.
+          </p>
+        </section>
+
+        <section class="about-section">
+          <h2 class="section-title">Algorithms Included</h2>
+          <ul class="algo-list">
+            <li>
+              <strong>CPU Scheduling:</strong> FCFS (First-Come, First-Served),
+              SJF (Shortest Job First)
+            </li>
+            <li>
+              <strong>Deadlock / Banker's Algorithm:</strong> Resource
+              allocation, safe / unsafe state checking
+            </li>
+            <li>
+              <strong>Page Replacement:</strong> FIFO (First-In, First-Out), LRU
+              (Least Recently Used), Optimal
+            </li>
+          </ul>
+        </section>
+
+        <p class="footer-note">
+          This simulator was developed as a course project for CpE-OS 313
+          &mdash; Operating Systems.
+        </p>
+      </main>
     </div>
 
-    <nav>
-      <div class="nav_logo">
-        <img class="ams_logo" src="style/icons/ams_logo.png" alt="">
-        <p>StockMatic</p>
-      </div>
-      <div class="nav_menu" id="navMenu">
-        <ul>
-          <li><a href="index.html" class="link">Home</a></li>
-          <li><a href="about-us.html" class="link active">About Us</a></li>
-        </ul>
-      </div>
-      <div class="nav_button">
-        <button class="btn login_btn" id="signIn_Button2">Sign In</button>
-        <button class="btn signup_btn" id="signUp_Button2">Sign Up</button>
-      </div>
-      <div class="nav_menu_btn">
-        <i class="bx bx-menu" onclick=""></i>
-      </div>
-    </nav>
-
-    <main class="about-main">
-      <div class="logo-title">
-        <img src="style/icons/ams_logo.png" alt="Logo">
-        <span>OS Algorithm Simulator</span>
-      </div>
-      <p class="subtitle">About Us</p>
-
-      <section class="about-section">
-        <h2 class="section-title">Developers</h2>
-        <ul class="names-list">
-          <li>Galo, Alexander Raymond C.</li>
-          <li>Nucom Jr, Noel U.</li>
-          <li>Nuqui, John Benedict P.</li>
-          <li>Santos, Kenzo S.</li>
-          <li>Tolentino, Jastien Myer Q.</li>
-          <li>Tolentino, Romiel S.</li>
-        </ul>
-      </section>
-
-      <section class="about-section">
-        <h2 class="section-title">Course Information</h2>
-        <p class="course-info">
-          <span class="label">Program / Section:</span> BSCpE - 3E<br>
-          <span class="label">Course Code:</span> CpE-OS 313<br>
-          <span class="label">Course Title:</span> Operating Systems<br>
-          <span class="label">Instructor:</span> ENGR. REGALA, JAMIE S.
-        </p>
-      </section>
-
-      <section class="about-section">
-        <h2 class="section-title">Algorithms Included</h2>
-        <ul class="algo-list">
-          <li><strong>CPU Scheduling:</strong> FCFS (First-Come, First-Served), SJF (Shortest Job First)</li>
-          <li><strong>Deadlock / Banker's Algorithm:</strong> Resource allocation, safe / unsafe state checking</li>
-          <li><strong>Page Replacement:</strong> FIFO (First-In, First-Out), LRU (Least Recently Used), Optimal</li>
-        </ul>
-      </section>
-
-      <p class="footer-note">
-        This simulator was developed as a course project for CpE-OS 313 &mdash; Operating Systems.
-      </p>
-    </main>
-  </div>
-
-  <script src="backend/index_script.js"></script>
-  <script type="module" src="backend/design/index.js"></script>
-</body>
+    <script src="backend/index_script.js"></script>
+    <script type="module" src="backend/design/index.js"></script>
+  </body>
 </html>
