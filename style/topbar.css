@@ -1,0 +1,75 @@
+/* topbar.css */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.226);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  z-index: 2000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  font-family: Poppins, Arial, sans-serif;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.topbar-left img {
+  width: 34px;
+  height: auto;
+}
+.topbar-left span {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.topbar-right {
+  display: flex;
+  gap: 8px;
+}
+.topbar-right button {
+  padding: 6px 12px;
+  border-radius: 18px;
+  width: 100px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  background: linear-gradient(135deg, #5670f0, #7f53ac);
+  color: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+.topbar-right button:nth-child(2) {
+  background: #e85656;
+}
+.topbar-right button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+}
+.topbar-right button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  opacity: 0.9;
+}
+
+@media (max-width: 576px) {
+  .topbar {
+    padding: 0 10px;
+  }
+  .topbar-left span {
+    font-size: 14px;
+  }
+  .topbar-right button {
+    padding: 4px 10px;
+  }
+}

@@ -1,331 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>CPU Scheduling Simulator</title>
-    <link rel="stylesheet" href="style/login.css">
-    <link rel="icon" type="image/png" href="style/icons/top_logo.png">
-    <link rel="stylesheet" href="style/notification.css">
+    <link rel="stylesheet" href="style/login.css" />
+    <link rel="icon" type="image/png" href="style/icons/top_logo.png" />
+    <link rel="stylesheet" href="style/notification.css" />
+    <link rel="stylesheet" href="style/topbar.css">
     <style>
-        /* Page background and centering (same feel as OS Algorithm Simulator) */
-        body {
-            position: absolute;
-            left: 0; right: 0; top: 0; bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-            margin: 0;
-            padding: 0;
-            font-family: Poppins, Arial, sans-serif;
-            overflow: hidden;
-        }
+      /* Page background and centering (same eel as OSAlgorith Simulator) */
+      body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+        margin: 0;
+        padding: 0;
+        font-family: Poppins, Arial, sans-serif;
+        overflow: hidden;
+      }
 
-        /* Background video container (optional, like homepage) */
-        .video-container {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            overflow: hidden;
-        }
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+      /* Background video container (optional, like homepage) */
+      .video-container {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .video-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        /* Main card */
+      /* Main card */
+      main {
+        background-color: rgba(255, 255, 255, 0.9);
+        width: 950px;
+        max-width: 95%;
+        padding: 24px 24px 22px;
+        margin: 0 auto;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      .logo-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      .logo-title img {
+        width: 50px;
+        height: auto;
+      }
+      .logo-title span {
+        font-size: 22px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin-top: 0;
+        margin-bottom: 18px;
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      /* Layout: left = inputs, right = charts/results */
+      .content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+        gap: 20px;
+        align-items: flex-start;
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 12px;
+        padding: 14px 16px 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        text-align: left;
+      }
+
+      .panel h3 {
+        margin: 0 0 10px;
+        font-size: 16px;
+      }
+
+      /* Input table styling */
+      #inputTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 6px;
+        font-size: 13px;
+      }
+      #inputTable th,
+      #inputTable td {
+        border: 1px solid #ccc;
+        padding: 6px 4px;
+        text-align: center;
+      }
+      #inputTable th {
+        background-color: #f3f4ff;
+        font-weight: 600;
+      }
+      #inputTable input {
+        width: 80%;
+        padding: 4px 3px;
+        text-align: center;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 12px;
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
+      }
+      #inputTable input:focus {
+        border-color: #4e6bff;
+        box-shadow: 0 0 0 2px rgba(78, 107, 255, 0.2);
+      }
+
+      /* Buttons (card style) */
+      .btn-row {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      button {
+        padding: 7px 14px;
+        border-radius: 20px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(135deg, #4e6bff, #7f53ac);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.3px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+      }
+      button.secondary {
+        background: #f3f4ff;
+        color: #333;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+      }
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      }
+      button:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.16);
+        opacity: 0.9;
+      }
+
+      /* Gantt + results section */
+      .gantt-wrapper {
+        margin-top: 6px;
+      }
+
+      .gantt-header {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      #ganttChart,
+      #timeScale {
+        display: flex;
+        margin-top: 8px;
+        align-items: center;
+        overflow-x: auto;
+      }
+
+      .gantt-block {
+        border: 1px solid #4e6bff;
+        background: linear-gradient(135deg, #a9c9ff, #ffbbec);
+        font-weight: 600;
+        padding: 8px 0;
+        opacity: 0;
+        transform: translateY(14px);
+        transition: 0.4s ease;
+        text-align: center;
+        border-radius: 8px;
+        font-size: 12px;
+        color: #222;
+      }
+
+      .gantt-block.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #timeScale span {
+        font-weight: 600;
+        font-size: 11px;
+        text-align: left;
+      }
+
+      /* Results table styling */
+      #resultsTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      #resultsTable th,
+      #resultsTable td {
+        border: 1px solid #ccc;
+        padding: 6px 4px;
+        text-align: center;
+      }
+      #resultsTable th {
+        background-color: #f3f4ff;
+      }
+      #resultsTable tr:nth-child(even) td {
+        background-color: #fafbff;
+      }
+
+      .results-header {
+        font-size: 15px;
+        font-weight: 600;
+        margin-top: 12px;
+        margin-bottom: 4px;
+      }
+
+      @media (max-width: 900px) {
         main {
-            background-color: rgba(255, 255, 255, 0.9);
-            width: 950px;
-            max-width: 95%;
-            padding: 24px 24px 22px;
-            margin: 0 auto;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+          width: 100%;
+          margin: 0 10px;
         }
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
 
-        .logo-title {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 8px;
-        }
-        .logo-title img {
-            width: 50px;
-            height: auto;
+      @media (max-width: 576px) {
+        main {
+          padding: 18px 14px;
         }
         .logo-title span {
-            font-size: 22px;
-            font-weight: 600;
-        }
-
-        .subtitle {
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        /* Layout: left = inputs, right = charts/results */
-        .content-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
-            gap: 20px;
-            align-items: flex-start;
-        }
-
-        .panel {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 14px 16px 16px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-            text-align: left;
-        }
-
-        .panel h3 {
-            margin: 0 0 10px;
-            font-size: 16px;
-        }
-
-        /* Input table styling */
-        #inputTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 6px;
-            font-size: 13px;
-        }
-        #inputTable th,
-        #inputTable td {
-            border: 1px solid #ccc;
-            padding: 6px 4px;
-            text-align: center;
-        }
-        #inputTable th {
-            background-color: #f3f4ff;
-            font-weight: 600;
-        }
-        #inputTable input {
-            width: 80%;
-            padding: 4px 3px;
-            text-align: center;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 12px;
-            outline: none;
-            transition: border-color 0.15s, box-shadow 0.15s;
-        }
-        #inputTable input:focus {
-            border-color: #4e6bff;
-            box-shadow: 0 0 0 2px rgba(78,107,255,0.2);
-        }
-
-        /* Buttons (card style) */
-        .btn-row {
-            margin-top: 10px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
+          font-size: 18px;
         }
         button {
-            padding: 7px 14px;
-            border-radius: 20px;
-            border: none;
-            cursor: pointer;
-            background: linear-gradient(135deg, #4e6bff, #7f53ac);
-            color: #fff;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+          flex: 1 1 100%;
+          text-align: center;
         }
-        button.secondary {
-            background: #f3f4ff;
-            color: #333;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-        }
-        button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
-        }
-        button:active {
-            transform: translateY(0);
-            box-shadow: 0 1px 4px rgba(0,0,0,0.16);
-            opacity: 0.9;
-        }
-
-        /* Gantt + results section */
-        .gantt-wrapper {
-            margin-top: 6px;
-        }
-
-        .gantt-header {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        #ganttChart, #timeScale {
-            display: flex;
-            margin-top: 8px;
-            align-items: center;
-            overflow-x: auto;
-        }
-
-        .gantt-block {
-            border: 1px solid #4e6bff;
-            background: linear-gradient(135deg, #a9c9ff, #ffbbec);
-            font-weight: 600;
-            padding: 8px 0;
-            opacity: 0;
-            transform: translateY(14px);
-            transition: 0.4s ease;
-            text-align: center;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #222;
-        }
-
-        .gantt-block.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        #timeScale span {
-            font-weight: 600;
-            font-size: 11px;
-            text-align: left;
-        }
-
-        /* Results table styling */
-        #resultsTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            font-size: 12px;
-        }
-        #resultsTable th,
-        #resultsTable td {
-            border: 1px solid #ccc;
-            padding: 6px 4px;
-            text-align: center;
-        }
-        #resultsTable th {
-            background-color: #f3f4ff;
-        }
-        #resultsTable tr:nth-child(even) td {
-            background-color: #fafbff;
-        }
-
-        .results-header {
-            font-size: 15px;
-            font-weight: 600;
-            margin-top: 12px;
-            margin-bottom: 4px;
-        }
-
-        @media (max-width: 900px) {
-            main {
-                width: 100%;
-                margin: 0 10px;
-            }
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 576px) {
-            main {
-                padding: 18px 14px;
-            }
-            .logo-title span {
-                font-size: 18px;
-            }
-            button {
-                flex: 1 1 100%;
-                text-align: center;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div id="global-topbar"></div>
     <!-- Optional background video (same as homepage) -->
     <div class="video-container">
-        <video autoplay loop muted playsinline>
-            <source src="style/libs/bg.mp4" type="video/mp4">
-        </video>
+      <video autoplay loop muted playsinline>
+        <source src="style/libs/bg.mp4" type="video/mp4" />
+      </video>
     </div>
 
     <main>
-        <div class="logo-title">
-            <img src="style/icons/ams_logo.png" alt="Logo">
-            <span>CPU Scheduling Simulator</span>
-        </div>
-        <p class="subtitle">Simulate FCFS and SJF with interactive Gantt chart, waiting time, and turnaround time.</p>
+      <div class="logo-title">
+        <img src="style/icons/ams_logo.png" alt="Logo" />
+        <span>CPU Scheduling Simulator</span>
+      </div>
+      <p class="subtitle">
+        Simulate FCFS and SJF with interactive Gantt chart, waiting time, and
+        turnaround time.
+      </p>
 
-        <div class="content-grid">
-            <!-- LEFT: Input panel -->
-            <section class="panel">
-                <h3>Process Details</h3>
-                <table id="inputTable">
-                    <tr>
-                        <th>Process</th>
-                        <th>Arrival Time</th>
-                        <th>Burst Time</th>
-                    </tr>
-                    <tr>
-                        <td>P1</td>
-                        <td><input type="number" class="at" value="0"></td>
-                        <td><input type="number" class="bt" value="0"></td>
-                    </tr>
-                    <tr>
-                        <td>P2</td>
-                        <td><input type="number" class="at" value="0"></td>
-                        <td><input type="number" class="bt" value="0"></td>
-                    </tr>
-                    <tr>
-                        <td>P3</td>
-                        <td><input type="number" class="at" value="0"></td>
-                        <td><input type="number" class="bt" value="0"></td>
-                    </tr>
-                    <tr>
-                        <td>P4</td>
-                        <td><input type="number" class="at" value="0"></td>
-                        <td><input type="number" class="bt" value="0"></td>
-                    </tr>
-                </table>
+      <div class="content-grid">
+        <!-- LEFT: Input panel -->
+        <section class="panel">
+          <h3>Process Details</h3>
+          <table id="inputTable">
+            <tr>
+              <th>Process</th>
+              <th>Arrival Time</th>
+              <th>Burst Time</th>
+            </tr>
+            <tr>
+              <td>P1</td>
+              <td><input type="number" class="at" value="0" /></td>
+              <td><input type="number" class="bt" value="0" /></td>
+            </tr>
+            <tr>
+              <td>P2</td>
+              <td><input type="number" class="at" value="0" /></td>
+              <td><input type="number" class="bt" value="0" /></td>
+            </tr>
+            <tr>
+              <td>P3</td>
+              <td><input type="number" class="at" value="0" /></td>
+              <td><input type="number" class="bt" value="0" /></td>
+            </tr>
+            <tr>
+              <td>P4</td>
+              <td><input type="number" class="at" value="0" /></td>
+              <td><input type="number" class="bt" value="0" /></td>
+            </tr>
+          </table>
 
-                <div class="btn-row">
-                    <button class="secondary" onclick="addProcess()">Add Process</button>
-                    <button class="secondary" onclick="removeProcess()">Remove Process</button>
-                </div>
+          <div class="btn-row">
+            <button class="secondary" onclick="addProcess()">
+              Add Process
+            </button>
+            <button class="secondary" onclick="removeProcess()">
+              Remove Process
+            </button>
+          </div>
 
-                <div class="btn-row">
-                    <button onclick="runFCFS()">Generate FCFS</button>
-                    <button onclick="runSJF()">Generate SJF</button>
-                </div>
-            </section>
+          <div class="btn-row">
+            <button onclick="runFCFS()">Generate FCFS</button>
+            <button onclick="runSJF()">Generate SJF</button>
+          </div>
+        </section>
 
-            <!-- RIGHT: Gantt + Results -->
-            <section class="panel">
-                <div class="gantt-wrapper">
-                    <div class="gantt-header">Gantt Chart</div>
-                    <div id="ganttChart"></div>
-                    <div id="timeScale"></div>
-                </div>
+        <!-- RIGHT: Gantt + Results -->
+        <section class="panel">
+          <div class="gantt-wrapper">
+            <div class="gantt-header">Gantt Chart</div>
+            <div id="ganttChart"></div>
+            <div id="timeScale"></div>
+          </div>
 
-                <div class="results-header">Results Table</div>
-                <table id="resultsTable"></table>
-            </section>
-        </div>
+          <div class="results-header">Results Table</div>
+          <table id="resultsTable"></table>
+        </section>
+      </div>
     </main>
 
     <script>
-    /* -------- ADD / REMOVE -------- */
-    function addProcess() {
+      /* -------- ADD / REMOVE -------- */
+      function addProcess() {
         const table = document.getElementById("inputTable");
         const rowCount = table.rows.length;
         const row = table.insertRow();
@@ -334,56 +347,65 @@
             <td><input type="number" class="at" value="0"></td>
             <td><input type="number" class="bt" value="1"></td>
         `;
-        showNotification('success', 'Successfully', 'Added a process');
-    }
+        showNotification("success", "Successfully", "Added a process");
+      }
 
-    function removeProcess() {
+      function removeProcess() {
         const table = document.getElementById("inputTable");
         if (table.rows.length > 2) {
-            table.deleteRow(-1);
-            showNotification('success', 'Successfully', 'Removed a process');
+          table.deleteRow(-1);
+          showNotification("success", "Successfully", "Removed a process");
         } else {
-            showNotification('error', 'Error', 'Rows should be more than two');
+          showNotification("error", "Error", "Rows should be more than two");
         }
-    }
+      }
 
-    /* -------- INPUT -------- */
-    function getTableData() {
-        const at = [...document.querySelectorAll(".at")].map(x => parseInt(x.value));
-        const bt = [...document.querySelectorAll(".bt")].map(x => parseInt(x.value));
+      /* -------- INPUT -------- */
+      function getTableData() {
+        const at = [...document.querySelectorAll(".at")].map((x) =>
+          parseInt(x.value)
+        );
+        const bt = [...document.querySelectorAll(".bt")].map((x) =>
+          parseInt(x.value)
+        );
 
         // Validate for non-numeric or invalid input
         if (at.some(isNaN) || bt.some(isNaN)) {
-            showNotification('error', 'Error', 'Invalid input detected');
-            throw new Error("Invalid input detected");
+          showNotification("error", "Error", "Invalid input detected");
+          throw new Error("Invalid input detected");
         }
 
         return { processes: bt.map((_, i) => i + 1), arrival: at, burst: bt };
-    }
+      }
 
-    /* -------- FCFS -------- */
-    function FCFS(processes, arrival, burst) {
+      /* -------- FCFS -------- */
+      function FCFS(processes, arrival, burst) {
         let gantt = [];
         let time = 0;
-        let wt = [], tat = [];
+        let wt = [],
+          tat = [];
 
         for (let i = 0; i < processes.length; i++) {
-            // Skip idle time and directly process the next arrival
-            if (time < arrival[i]) {
-                time = arrival[i];
-            }
+          // Skip idle time and directly process the next arrival
+          if (time < arrival[i]) {
+            time = arrival[i];
+          }
 
-            gantt.push({ p: "P" + processes[i], start: time, end: time + burst[i] });
-            time += burst[i];
+          gantt.push({
+            p: "P" + processes[i],
+            start: time,
+            end: time + burst[i],
+          });
+          time += burst[i];
 
-            tat[i] = time - arrival[i];
-            wt[i] = tat[i] - burst[i];
+          tat[i] = time - arrival[i];
+          wt[i] = tat[i] - burst[i];
         }
         return { gantt, wt, tat, processes, arrival, burst };
-    }
+      }
 
-    /* -------- SJF (NON-PREEMPTIVE, FINAL) -------- */
-    function SJF(arrival, burst) {
+      /* -------- SJF (NON-PREEMPTIVE, FINAL) -------- */
+      function SJF(arrival, burst) {
         const n = arrival.length;
         let time = 0;
         let completed = 0;
@@ -393,92 +415,96 @@
         const gantt = [];
 
         if (n > 0) {
-            time = Math.min(...arrival);
+          time = Math.min(...arrival);
         }
 
         while (completed < n) {
-            let idx = -1;
-            let minBT = Infinity;
+          let idx = -1;
+          let minBT = Infinity;
 
-            // find available process with smallest burst time
+          // find available process with smallest burst time
+          for (let i = 0; i < n; i++) {
+            if (arrival[i] <= time && remaining[i] > 0 && burst[i] < minBT) {
+              minBT = burst[i];
+              idx = i;
+            }
+          }
+
+          if (idx === -1) {
+            // CPU idle: jump to next arrival of unfinished process
+            let nextTime = Infinity;
             for (let i = 0; i < n; i++) {
-                if (arrival[i] <= time && remaining[i] > 0 && burst[i] < minBT) {
-                    minBT = burst[i];
-                    idx = i;
-                }
+              if (
+                remaining[i] > 0 &&
+                arrival[i] > time &&
+                arrival[i] < nextTime
+              ) {
+                nextTime = arrival[i];
+              }
             }
-
-            if (idx === -1) {
-                // CPU idle: jump to next arrival of unfinished process
-                let nextTime = Infinity;
-                for (let i = 0; i < n; i++) {
-                    if (remaining[i] > 0 && arrival[i] > time && arrival[i] < nextTime) {
-                        nextTime = arrival[i];
-                    }
-                }
-                if (nextTime === Infinity) {
-                    break; // no more work, safety break
-                }
-                time = nextTime;
-                continue;
+            if (nextTime === Infinity) {
+              break; // no more work, safety break
             }
+            time = nextTime;
+            continue;
+          }
 
-            const start = time;
-            const finish = time + burst[idx];
+          const start = time;
+          const finish = time + burst[idx];
 
-            gantt.push({ p: "P" + (idx + 1), start: start, end: finish });
+          gantt.push({ p: "P" + (idx + 1), start: start, end: finish });
 
-            time = finish;
-            tat[idx] = time - arrival[idx];
-            wt[idx] = tat[idx] - burst[idx];
-            remaining[idx] = 0;
-            completed++;
+          time = finish;
+          tat[idx] = time - arrival[idx];
+          wt[idx] = tat[idx] - burst[idx];
+          remaining[idx] = 0;
+          completed++;
         }
 
         return {
-            gantt,
-            wt,
-            tat,
-            processes: burst.map((_, i) => i + 1),
-            arrival,
-            burst
+          gantt,
+          wt,
+          tat,
+          processes: burst.map((_, i) => i + 1),
+          arrival,
+          burst,
         };
-    }
+      }
 
-    /* -------- GANTT -------- */
-    function createGanttChart(gantt) {
+      /* -------- GANTT -------- */
+      function createGanttChart(gantt) {
         const chart = document.getElementById("ganttChart");
         const scale = document.getElementById("timeScale");
         chart.innerHTML = scale.innerHTML = "";
 
         if (!gantt || gantt.length === 0) {
-            return;
+          return;
         }
 
         gantt.forEach((b, i) => {
-            const d = document.createElement("div");
-            d.className = "gantt-block";
-            d.style.width = (b.end - b.start) * 40 + "px";
-            d.textContent = b.p;
-            chart.appendChild(d);
-            setTimeout(() => d.classList.add("show"), i * 150);
+          const d = document.createElement("div");
+          d.className = "gantt-block";
+          d.style.width = (b.end - b.start) * 40 + "px";
+          d.textContent = b.p;
+          chart.appendChild(d);
+          setTimeout(() => d.classList.add("show"), i * 150);
         });
 
-        gantt.forEach(b => {
-            const s = document.createElement("span");
-            s.style.display = "inline-block";
-            s.style.width = (b.end - b.start) * 40 + "px";
-            s.textContent = b.start;
-            scale.appendChild(s);
+        gantt.forEach((b) => {
+          const s = document.createElement("span");
+          s.style.display = "inline-block";
+          s.style.width = (b.end - b.start) * 40 + "px";
+          s.textContent = b.start;
+          scale.appendChild(s);
         });
 
         const end = document.createElement("span");
         end.textContent = gantt[gantt.length - 1].end;
         scale.appendChild(end);
-    }
+      }
 
-    /* -------- RESULTS TABLE (UPDATED) -------- */
-    function displayTable(result) {
+      /* -------- RESULTS TABLE (UPDATED) -------- */
+      function displayTable(result) {
         const table = document.getElementById("resultsTable");
 
         let html = `
@@ -493,8 +519,8 @@
         `;
 
         result.processes.forEach((p, i) => {
-            const finish = result.arrival[i] + result.tat[i];
-            html += `
+          const finish = result.arrival[i] + result.tat[i];
+          html += `
                 <tr>
                     <td>P${p}</td>
                     <td>${result.arrival[i]}</td>
@@ -509,32 +535,37 @@
         html += `
             <tr>
                 <th colspan="4">AVERAGE</th>
-                <th>${(result.tat.reduce((a,b)=>a+b)/result.tat.length).toFixed(2)}</th>
-                <th>${(result.wt.reduce((a,b)=>a+b)/result.wt.length).toFixed(2)}</th>
+                <th>${(
+                  result.tat.reduce((a, b) => a + b) / result.tat.length
+                ).toFixed(2)}</th>
+                <th>${(
+                  result.wt.reduce((a, b) => a + b) / result.wt.length
+                ).toFixed(2)}</th>
             </tr>
         `;
         table.innerHTML = html;
-    }
+      }
 
-    /* -------- BUTTONS -------- */
-    function runFCFS() {
+      /* -------- BUTTONS -------- */
+      function runFCFS() {
         const data = getTableData();
         const result = FCFS(data.processes, data.arrival, data.burst);
         createGanttChart(result.gantt);
         displayTable(result);
-        showNotification('success', 'Successfully', 'Run FCFS');
-    }
+        showNotification("success", "Successfully", "Run FCFS");
+      }
 
-    function runSJF() {
+      function runSJF() {
         const data = getTableData();
         const result = SJF(data.arrival, data.burst);
         createGanttChart(result.gantt);
         displayTable(result);
-        showNotification('success', 'Successfully', 'Run SJF');
-    }
+        showNotification("success", "Successfully", "Run SJF");
+      }
     </script>
 
     <!-- Load notification system AFTER page script -->
     <script src="backend/notification.js"></script>
-</body>
+    <script src="backend/topbar.js"></script>
+  </body>
 </html>

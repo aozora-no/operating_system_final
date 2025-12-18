@@ -4,7 +4,7 @@
 .notification-container {
     display: block;
     position: fixed;
-    top: 10px;
+    bottom: 100px;
     right: 10px;
     z-index: 9999;
 }
