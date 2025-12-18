@@ -78,7 +78,7 @@ if (signUp) {
         };
 
         // write to Firestore: collection "users", document id = user.uid
-        const docRef = doc(db, "email", user.uid);
+        const docRef = doc(db, "users", user.uid);
         setDoc(docRef, userData)
           .then(() => {
             showMessage("Account created successfully", "signUpMessage", 2000);
