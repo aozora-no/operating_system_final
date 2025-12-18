@@ -1,0 +1,77 @@
+body {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+  margin: 0;
+  padding: 0;
+  font-family: Poppins, sans-serif;
+}
+main {
+  background-color: rgba(255, 255, 255, 0.9);
+  width: 800px;
+  max-width: 95%;
+  padding: 30px 24px 26px;
+  margin: 0 auto;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+.algo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.algo-card {
+  width: 230px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  color: #111;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.algo-card h3 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+.algo-card p {
+  margin: 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+.algo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+.logo-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.logo-title img {
+  width: 60px;
+  height: auto;
+}
+.logo-title span {
+  font-size: 24px;
+  font-weight: 600;
+}
+@media (max-width: 576px) {
+  main {
+    padding: 20px 15px;
+  }
+  .algo-card {
+    width: 100%;
+  }
+  .logo-title span {
+    font-size: 20px;
+  }
+}
