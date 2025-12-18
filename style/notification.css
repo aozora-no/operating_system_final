@@ -1,6 +1,5 @@
-/* notification.css */
 
-/* Container fixed at top-right */
+
 .notification-container {
     display: block;
     position: fixed;
@@ -9,7 +8,6 @@
     z-index: 9999;
 }
 
-/* Base notification box */
 .notification {
     display: block;
     position: relative;
@@ -25,7 +23,7 @@
     margin-bottom: 8px;
 }
 
-/* Close button */
+
 .notification-close {
     padding: 0;
     cursor: pointer;
@@ -41,7 +39,6 @@
     width: 40px;
 }
 
-/* Title and message */
 .notification-title {
     font-size: 1.1em;
     font-weight: bold;
@@ -51,7 +48,7 @@
     font-size: 0.9em;
 }
 
-/* Icon area (optional, can be left blank) */
+
 .notification-success::before,
 .notification-error::before,
 .notification-info::before,
@@ -64,7 +61,7 @@
     transform: translateY(-50%);
 }
 
-/* Types */
+
 .notification-success {
     background-color: #006400;
 }
@@ -78,7 +75,7 @@
     background-color: #dfb81c;
 }
 
-/* Simple fade/slide animation */
+
 @-webkit-keyframes show-notification {
     0%   { opacity: 0; -webkit-transform: translate(0, -100%); }
     10%  { opacity: 1; -webkit-transform: translate(0, 0); }
@@ -92,7 +89,6 @@
     100% { opacity: 0; transform: translate(0, -100%); }
 }
 
-/* Mobile adjustment */
 @media (max-width: 576px) {
     .notification-container {
         left: 10px;
