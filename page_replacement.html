@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Page Replacement Algorithm Visualization</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #4a90e2;
+        margin-bottom: 40px;
+        font-size: 28px;
+        font-weight: 300;
+        letter-spacing: 1px;
+      }
+
+      .input-group {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        color: #333;
+        font-size: 14px;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      input {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 400px;
+        margin-bottom: 15px;
+      }
+
+      button {
+        background: #4a90e2;
+        color: white;
+        padding: 10px 30px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #357abd;
+      }
+
+      .results {
+        margin-top: 40px;
+        text-align: center;
+      }
+
+      .results h2 {
+        color: #333;
+        font-size: 20px;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+
+      .info {
+        margin-bottom: 15px;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .info span {
+        font-weight: 600;
+      }
+
+      .method {
+        margin-top: 50px;
+        margin-bottom: 50px;
+      }
+
+      .method h3 {
+        color: #333;
+        font-size: 18px;
+        margin-bottom: 20px;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: "Courier New", monospace;
+      }
+
+      th,
+      td {
+        border: 1px solid #333;
+        padding: 12px 8px;
+        text-align: center;
+        font-size: 13px;
+        font-weight: 600;
+        width: 35px;
+        height: 35px;
+      }
+
+      th {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      td {
+        background: white;
+        color: #333;
+      }
+
+      td.replaced {
+        background: #ff6b6b;
+        color: white;
+        font-weight: bold;
+      }
+
+      .stats {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 14px;
+      }
+
+      .stat {
+        margin: 8px 0;
+        color: #666;
+      }
+
+      .stat.hits {
+        color: #4a90e2;
+      }
+
+      .stat.faults {
+        color: #ff6b6b;
+      }
+
+      .note {
+        text-align: center;
+        font-size: 12px;
+        color: #999;
+        margin-top: 10px;
+        font-style: italic;
+      }
+
+      .note-red {
+        color: #ff6b6b;
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        th,
+        td {
+          padding: 8px 4px;
+          font-size: 11px;
+          width: 28px;
+          height: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Page Replacement Algorithm Visualization</h1>
+
+      <div class="input-group">
+        <label>Reference String</label>
+        <input
+          type="text"
+          id="refString"
+          value="ex. 7 0 1 2 0 3 0 4 2 3 0 3 0 3 2 1 2 0 1 7 0 1"
+          placeholder="ex. 7 0 1 2 0 3 0 4 2 3 0 3 0 3 2 1 2 0 1 7 0 1" />
+
+        <label>Frame Size</label>
+        <input type="number" id="frameSize" value="3" min="1" max="10" />
+
+        <button onclick="simulate()">Submit</button>
+      </div>
+
+      <div class="results" id="results" style="display: none">
+        <h2>Results</h2>
+        <div class="info">Sequence: <span id="seq"></span></div>
+        <div class="info">Frame Size: <span id="fs"></span></div>
+        <div class="info">Number of References: <span id="numRef"></span></div>
+        <div class="info" style="color: #4a90e2">Blue is the sequence</div>
+        <div class="info" style="color: #ff6b6b">
+          <span class="note-red"
+            >Red is the replaced value when page fault occurs</span
+          >
+        </div>
+
+        <!-- FIFO -->
+        <div class="method">
+          <h3>Method 1: First In First Out (FIFO)</h3>
+          <div class="table-wrapper">
+            <table id="fifo-table"></table>
+          </div>
+          <div class="stats">
+            <div class="stat hits">
+              Number of Hits: <span id="fifo-hits">0</span>
+            </div>
+            <div class="stat faults">
+              Page Faults: <span id="fifo-faults">0</span>
+            </div>
+            <div class="stat">Hit Rate: <span id="fifo-rate">0%</span></div>
+          </div>
+        </div>
+
+        <!-- LRU -->
+        <div class="method">
+          <h3>Method 2: Least Recently Used (LRU)</h3>
+          <div class="table-wrapper">
+            <table id="lru-table"></table>
+          </div>
+          <div class="stats">
+            <div class="stat hits">
+              Number of Hits: <span id="lru-hits">0</span>
+            </div>
+            <div class="stat faults">
+              Page Faults: <span id="lru-faults">0</span>
+            </div>
+            <div class="stat">Hit Rate: <span id="lru-rate">0%</span></div>
+          </div>
+        </div>
+
+        <!-- Optimal -->
+        <div class="method">
+          <h3>Method 3: Optimal</h3>
+          <div class="table-wrapper">
+            <table id="optimal-table"></table>
+          </div>
+          <div class="stats">
+            <div class="stat hits">
+              Number of Hits: <span id="optimal-hits">0</span>
+            </div>
+            <div class="stat faults">
+              Page Faults: <span id="optimal-faults">0</span>
+            </div>
+            <div class="stat">Hit Rate: <span id="optimal-rate">0%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function simulate() {
+        const input = document.getElementById("refString").value.trim();
+        const frameSize = parseInt(document.getElementById("frameSize").value);
+
+        if (!input || input.startsWith("ex.")) {
+          alert("Please enter a valid reference string");
+          return;
+        }
+
+        const refString = input.split(/\s+/).map(Number);
+        if (refString.some(isNaN)) {
+          alert("Reference string must contain only numbers");
+          return;
+        }
+
+        // Display input info
+        document.getElementById("seq").textContent = refString.join(" ");
+        document.getElementById("fs").textContent = frameSize;
+        document.getElementById("numRef").textContent = refString.length;
+
+        // Run algorithms
+        const fifo = runFIFO(refString, frameSize);
+        const lru = runLRU(refString, frameSize);
+        const optimal = runOptimal(refString, frameSize);
+
+        // Display results
+        displayTable("fifo", fifo, frameSize, refString);
+        displayTable("lru", lru, frameSize, refString);
+        displayTable("optimal", optimal, frameSize, refString);
+
+        document.getElementById("results").style.display = "block";
+      }
+
+      function runFIFO(refString, frameSize) {
+        const frames = [];
+        const queue = [];
+        const history = [];
+        let hits = 0,
+          faults = 0;
+
+        refString.forEach((page) => {
+          if (frames.includes(page)) {
+            hits++;
+            history.push({ frames: [...frames], replaced: null, isHit: true });
+          } else {
+            faults++;
+            let replaced = null;
+            if (frames.length < frameSize) {
+              frames.push(page);
+              queue.push(page);
+            } else {
+              replaced = queue.shift();
+              frames.splice(frames.indexOf(replaced), 1);
+              frames.push(page);
+              queue.push(page);
+            }
+            history.push({ frames: [...frames], replaced, isHit: false });
+          }
+        });
+
+        return { history, hits, faults, total: refString.length };
+      }
+
+      function runLRU(refString, frameSize) {
+        const frames = [];
+        const lastUsed = new Map();
+        const history = [];
+        let hits = 0,
+          faults = 0;
+
+        refString.forEach((page, step) => {
+          if (frames.includes(page)) {
+            hits++;
+            lastUsed.set(page, step);
+            history.push({ frames: [...frames], replaced: null, isHit: true });
+          } else {
+            faults++;
+            let replaced = null;
+            if (frames.length < frameSize) {
+              frames.push(page);
+            } else {
+              let lruPage = frames[0];
+              let minUsed = lastUsed.get(lruPage) || -1;
+              for (let i = 0; i < frames.length; i++) {
+                if ((lastUsed.get(frames[i]) || -1) < minUsed) {
+                  minUsed = lastUsed.get(frames[i]) || -1;
+                  lruPage = frames[i];
+                }
+              }
+              replaced = lruPage;
+              frames.splice(frames.indexOf(lruPage), 1);
+              frames.push(page);
+            }
+            lastUsed.set(page, step);
+            history.push({ frames: [...frames], replaced, isHit: false });
+          }
+        });
+
+        return { history, hits, faults, total: refString.length };
+      }
+
+      function runOptimal(refString, frameSize) {
+        const frames = [];
+        const history = [];
+        let hits = 0,
+          faults = 0;
+
+        refString.forEach((page, step) => {
+          if (frames.includes(page)) {
+            hits++;
+            history.push({ frames: [...frames], replaced: null, isHit: true });
+          } else {
+            faults++;
+            let replaced = null;
+            if (frames.length < frameSize) {
+              frames.push(page);
+            } else {
+              let pageToReplace = frames[0];
+              let maxDistance = -1;
+
+              for (let f of frames) {
+                let nextUse = Infinity;
+                for (let i = step + 1; i < refString.length; i++) {
+                  if (refString[i] === f) {
+                    nextUse = i;
+                    break;
+                  }
+                }
+                if (nextUse > maxDistance) {
+                  maxDistance = nextUse;
+                  pageToReplace = f;
+                }
+              }
+              replaced = pageToReplace;
+              frames.splice(frames.indexOf(pageToReplace), 1);
+              frames.push(page);
+            }
+            history.push({ frames: [...frames], replaced, isHit: false });
+          }
+        });
+
+        return { history, hits, faults, total: refString.length };
+      }
+
+      function displayTable(algo, result, frameSize, refString) {
+        const table = document.getElementById(`${algo}-table`);
+        table.innerHTML = "";
+
+        // Header - reference string
+        const headerRow = document.createElement("tr");
+        refString.forEach((ref, idx) => {
+          const th = document.createElement("th");
+          th.textContent = ref;
+          th.style.background = "#4a90e2";
+          th.style.color = "white";
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        // Frame rows
+        for (let frameIdx = 0; frameIdx < frameSize; frameIdx++) {
+          const row = document.createElement("tr");
+          result.history.forEach((item, idx) => {
+            const td = document.createElement("td");
+            const page = item.frames[frameIdx];
+
+            if (page === undefined) {
+              td.textContent = "-";
+              td.style.color = "#999";
+            } else {
+              td.textContent = page;
+
+              // RED if this page was replaced at this step
+              if (item.replaced !== null && item.replaced === page) {
+                td.classList.add("replaced");
+              }
+            }
+            row.appendChild(td);
+          });
+          table.appendChild(row);
+        }
+
+        // Update stats
+        const hitRate = ((result.hits / result.total) * 100).toFixed(2);
+        document.getElementById(`${algo}-hits`).textContent = result.hits;
+        document.getElementById(`${algo}-faults`).textContent = result.faults;
+        document.getElementById(`${algo}-rate`).textContent = hitRate + "%";
+      }
+    </script>
+  </body>
+</html>
