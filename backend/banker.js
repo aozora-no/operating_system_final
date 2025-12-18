@@ -234,7 +234,255 @@ function createTables(populateWithCurrentData = true) {
     }
 }
 
-// Example loaders and generateRandomExample remain as in your last file.[file:5]
+// ===== Example loaders =====
+
+function loadSafeExample() {
+    numProcesses = 5;
+    numResources = 3;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [0, 1, 0],
+        [2, 0, 0],
+        [3, 0, 2],
+        [2, 1, 1],
+        [0, 0, 2]
+    ];
+
+    max = [
+        [7, 5, 3],
+        [3, 2, 2],
+        [9, 0, 2],
+        [4, 3, 3],
+        [5, 3, 3]
+    ];
+
+    available = [3, 3, 2];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("SIMPLE SAFE EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("Classic safe state from OS textbooks.\n");
+    addToResults("Safe sequence exists: P1 → P3 → P4 → P0 → P2\n");
+    updateStatus("Safe Example", "safe");
+}
+
+function loadClassicSafeExample() {
+    numProcesses = 4;
+    numResources = 3;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [0, 0, 1],
+        [2, 0, 0],
+        [0, 1, 0],
+        [1, 0, 0]
+    ];
+
+    max = [
+        [0, 0, 2],
+        [3, 1, 0],
+        [1, 2, 1],
+        [2, 1, 1]
+    ];
+
+    available = [2, 1, 1];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("CLASSIC SAFE EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("Very clear progression:\n");
+    addToResults("P0 can finish immediately (needs only 1 more R2)\n");
+    addToResults("Safe sequence: P0 → P2 → P3 → P1\n");
+    updateStatus("Classic Safe", "safe");
+}
+
+function loadResourceRichExample() {
+    numProcesses = 5;
+    numResources = 4;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [1, 2, 0, 1],
+        [0, 1, 1, 0],
+        [2, 0, 0, 1],
+        [1, 1, 0, 0],
+        [0, 0, 1, 2]
+    ];
+
+    max = [
+        [3, 3, 2, 2],
+        [1, 2, 2, 1],
+        [3, 1, 1, 2],
+        [2, 2, 1, 1],
+        [1, 1, 2, 3]
+    ];
+
+    available = [5, 4, 3, 4];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("RESOURCE-RICH EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("Plenty of resources available:\n");
+    addToResults("Available: [" + available.join(", ") + "]\n");
+    addToResults("Any process can finish immediately!\n");
+    addToResults("Multiple safe sequences exist.\n");
+    updateStatus("Resource Rich", "safe");
+}
+
+function loadDeadlockExample() {
+    numProcesses = 3;
+    numResources = 2;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [1, 0],
+        [0, 1],
+        [1, 1]
+    ];
+
+    max = [
+        [2, 1],
+        [1, 2],
+        [2, 2]
+    ];
+
+    available = [0, 0];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("SIMPLE DEADLOCK EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("All resources are currently allocated and no process can get enough to finish.\n");
+    addToResults("This leads to circular waiting and deadlock.\n");
+    updateStatus("Deadlock Example", "unsafe");
+}
+
+function loadClassicDeadlockExample() {
+    numProcesses = 4;
+    numResources = 2;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1]
+    ];
+
+    max = [
+        [2, 1],
+        [1, 2],
+        [2, 1],
+        [1, 2]
+    ];
+
+    available = [0, 0];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("CLASSIC DEADLOCK EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("All four processes are holding one resource and waiting for another.\n");
+    addToResults("Circular wait exists → deadlock.\n");
+    updateStatus("Classic Deadlock", "unsafe");
+}
+
+function loadResourceStarvationExample() {
+    numProcesses = 3;
+    numResources = 3;
+
+    document.getElementById('processes').value = numProcesses;
+    document.getElementById('resources').value = numResources;
+
+    allocation = [
+        [0, 1, 0],
+        [2, 0, 1],
+        [1, 0, 0]
+    ];
+
+    max = [
+        [3, 2, 1],
+        [3, 1, 2],
+        [2, 1, 1]
+    ];
+
+    available = [1, 0, 0];
+
+    createTables(true);
+
+    clearResults();
+    addToResults("RESOURCE STARVATION EXAMPLE:\n");
+    addToResults("=".repeat(50) + "\n\n");
+    addToResults("System appears to have resources, but:\n");
+    addToResults("No single process can complete with available resources.\n");
+    addToResults("This leads to starvation - processes wait indefinitely!\n");
+    updateStatus("Resource Starvation", "unsafe");
+}
+
+function generateRandomExample() {
+    try {
+        const p = toIntOrNaN(document.getElementById('processes').value);
+        const r = toIntOrNaN(document.getElementById('resources').value);
+
+        if (isNaN(p) || isNaN(r)) {
+            showNotification("error", "Error", "Invalid input detected");
+            throw new Error("Invalid input detected");
+        }
+
+        numProcesses = p;
+        numResources = r;
+
+        initZeroData();
+
+        for (let i = 0; i < numProcesses; i++) {
+            for (let j = 0; j < numResources; j++) {
+                const m = Math.floor(Math.random() * 5);
+                const a = Math.floor(Math.random() * (m + 1));
+                max[i][j] = m;
+                allocation[i][j] = a;
+            }
+        }
+
+        for (let j = 0; j < numResources; j++) {
+            let sumAlloc = 0;
+            for (let i = 0; i < numProcesses; i++) {
+                sumAlloc += allocation[i][j];
+            }
+            available[j] = Math.floor(Math.random() * 5) + sumAlloc;
+        }
+
+        createTables(true);
+        clearResults();
+        addToResults("RANDOM EXAMPLE GENERATED:\n");
+        addToResults("=".repeat(50) + "\n\n");
+        addToResults("Processes: " + numProcesses + ", Resources: " + numResources + "\n");
+        addToResults("Try 'Check Safe State' to see if it is safe.\n");
+        updateStatus("Random Example", "info");
+    } catch (error) {
+        // notification already shown if invalid
+    }
+}
+
+// ===== Helpers & algorithm =====
 
 function updateNeedTable() {
     calculateNeedMatrix();
