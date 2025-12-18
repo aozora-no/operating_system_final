@@ -5,7 +5,6 @@
     <title>CPU Scheduling Simulator</title>
     <link rel="stylesheet" href="style/login.css">
     <link rel="icon" type="image/png" href="style/icons/top_logo.png">
-    <link rel="stylesheet" href="style/notification.css">
     <style>
         /* Page background and centering (same feel as OS Algorithm Simulator) */
         body {
@@ -323,6 +322,7 @@
         </div>
     </main>
 
+    <!-- ORIGINAL SCRIPT (algorithms untouched) -->
     <script>
     /* -------- ADD / REMOVE -------- */
     function addProcess() {
@@ -334,30 +334,25 @@
             <td><input type="number" class="at" value="0"></td>
             <td><input type="number" class="bt" value="1"></td>
         `;
-        showNotification('success', 'Successfully', 'Added a process');
     }
 
     function removeProcess() {
         const table = document.getElementById("inputTable");
-        if (table.rows.length > 2) {
-            table.deleteRow(-1);
-            showNotification('success', 'Successfully', 'Removed a process');
-        } else {
-            showNotification('error', 'Error', 'Rows should be more than two');
-        }
+        if (table.rows.length > 2) table.deleteRow(-1);
+        else alert("At least one process is required.");
     }
 
     /* -------- INPUT -------- */
     function getTableData() {
         const at = [...document.querySelectorAll(".at")].map(x => parseInt(x.value));
         const bt = [...document.querySelectorAll(".bt")].map(x => parseInt(x.value));
-
+        
         // Validate for non-numeric or invalid input
         if (at.some(isNaN) || bt.some(isNaN)) {
-            showNotification('error', 'Error', 'Invalid input detected');
+            alert("Invalid input detected. Please make sure Arrival Time and Burst Time are numbers.");
             throw new Error("Invalid input detected");
         }
-
+        
         return { processes: bt.map((_, i) => i + 1), arrival: at, burst: bt };
     }
 
@@ -382,53 +377,33 @@
         return { gantt, wt, tat, processes, arrival, burst };
     }
 
-    /* -------- SJF (NON-PREEMPTIVE, FINAL) -------- */
+    /* -------- SJF (NON-PREEMPTIVE) -------- */
     function SJF(arrival, burst) {
-        const n = arrival.length;
-        let time = 0;
-        let completed = 0;
-        const remaining = burst.slice();
-        const wt = Array(n).fill(0);
-        const tat = Array(n).fill(0);
-        const gantt = [];
-
-        if (n > 0) {
-            time = Math.min(...arrival);
-        }
+        let n = arrival.length;
+        let time = 0, completed = 0;
+        let remaining = burst.slice();
+        let wt = Array(n).fill(0);
+        let tat = Array(n).fill(0);
+        let gantt = [];
 
         while (completed < n) {
-            let idx = -1;
-            let minBT = Infinity;
-
-            // find available process with smallest burst time
+            let idx = -1, minBT = Infinity;
             for (let i = 0; i < n; i++) {
-                if (arrival[i] <= time && remaining[i] > 0 && burst[i] < minBT) {
-                    minBT = burst[i];
+                if (arrival[i] <= time && remaining[i] > 0 && remaining[i] < minBT) {
+                    minBT = remaining[i];
                     idx = i;
                 }
             }
 
+            // Skip idle time and directly process the next arrival
             if (idx === -1) {
-                // CPU idle: jump to next arrival of unfinished process
-                let nextTime = Infinity;
-                for (let i = 0; i < n; i++) {
-                    if (remaining[i] > 0 && arrival[i] > time && arrival[i] < nextTime) {
-                        nextTime = arrival[i];
-                    }
-                }
-                if (nextTime === Infinity) {
-                    break; // no more work, safety break
-                }
-                time = nextTime;
+                time = Math.min(...arrival.filter((a, i) => remaining[i] > 0));
                 continue;
             }
 
-            const start = time;
-            const finish = time + burst[idx];
+            gantt.push({ p: "P" + (idx + 1), start: time, end: time + remaining[idx] });
+            time += remaining[idx];
 
-            gantt.push({ p: "P" + (idx + 1), start: start, end: finish });
-
-            time = finish;
             tat[idx] = time - arrival[idx];
             wt[idx] = tat[idx] - burst[idx];
             remaining[idx] = 0;
@@ -450,10 +425,6 @@
         const chart = document.getElementById("ganttChart");
         const scale = document.getElementById("timeScale");
         chart.innerHTML = scale.innerHTML = "";
-
-        if (!gantt || gantt.length === 0) {
-            return;
-        }
 
         gantt.forEach((b, i) => {
             const d = document.createElement("div");
@@ -522,7 +493,6 @@
         const result = FCFS(data.processes, data.arrival, data.burst);
         createGanttChart(result.gantt);
         displayTable(result);
-        showNotification('success', 'Successfully', 'Run FCFS');
     }
 
     function runSJF() {
@@ -530,11 +500,7 @@
         const result = SJF(data.arrival, data.burst);
         createGanttChart(result.gantt);
         displayTable(result);
-        showNotification('success', 'Successfully', 'Run SJF');
     }
     </script>
-
-    <!-- Load notification system AFTER page script -->
-    <script src="backend/notification.js"></script>
 </body>
 </html>
