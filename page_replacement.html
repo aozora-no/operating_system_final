@@ -1,471 +1,634 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Page Replacement Algorithm Visualization</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Page Replacement Algorithm Solver</title>
+    <link rel="stylesheet" href="style/login.css">
+    <link rel="icon" type="image/png" href="style/icons/top_logo.png">
+    <link rel="stylesheet" href="style/topbar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <link rel="stylesheet" href="style/notification.css" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: #f5f5f5;
-        padding: 40px 20px;
-      }
-
-      .container {
-        max-width: 1000px;
-        margin: 0 auto;
-        background: white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      h1 {
-        text-align: center;
-        color: #4a90e2;
-        margin-bottom: 40px;
-        font-size: 28px;
-        font-weight: 300;
-        letter-spacing: 1px;
-      }
-
-      .input-group {
-        margin-bottom: 30px;
-        text-align: center;
-      }
-
-      label {
-        display: block;
-        color: #333;
-        font-size: 14px;
-        margin-bottom: 10px;
-        font-weight: 500;
-      }
-
-      input {
-        padding: 10px 15px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        width: 100%;
-        max-width: 400px;
-        margin-bottom: 15px;
-      }
-
-      button {
-        background: #4a90e2;
-        color: white;
-        padding: 10px 30px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        transition: background 0.3s;
-      }
-
-      button:hover {
-        background: #357abd;
-      }
-
-      .results {
-        margin-top: 40px;
-        text-align: center;
-      }
-
-      .results h2 {
-        color: #333;
-        font-size: 20px;
-        margin-bottom: 20px;
-        font-weight: 600;
-      }
-
-      .info {
-        margin-bottom: 15px;
-        font-size: 14px;
-        color: #666;
-      }
-
-      .info span {
-        font-weight: 600;
-      }
-
-      .method {
-        margin-top: 50px;
-        margin-bottom: 50px;
-      }
-
-      .method h3 {
-        color: #333;
-        font-size: 18px;
-        margin-bottom: 20px;
-        text-align: left;
-        font-weight: 600;
-      }
-
-      .table-wrapper {
-        overflow-x: auto;
-        margin-bottom: 20px;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: "Courier New", monospace;
-      }
-
-      th,
-      td {
-        border: 1px solid #333;
-        padding: 12px 8px;
-        text-align: center;
-        font-size: 13px;
-        font-weight: 600;
-        width: 35px;
-        height: 35px;
-      }
-
-      th {
-        background: #f0f0f0;
-        color: #333;
-      }
-
-      td {
-        background: white;
-        color: #333;
-      }
-
-      td.replaced {
-        background: #ff6b6b;
-        color: white;
-        font-weight: bold;
-      }
-
-      .stats {
-        text-align: center;
-        margin-top: 15px;
-        font-size: 14px;
-      }
-
-      .stat {
-        margin: 8px 0;
-        color: #666;
-      }
-
-      .stat.hits {
-        color: #4a90e2;
-      }
-
-      .stat.faults {
-        color: #ff6b6b;
-      }
-
-      .note {
-        text-align: center;
-        font-size: 12px;
-        color: #999;
-        margin-top: 10px;
-        font-style: italic;
-      }
-
-      .note-red {
-        color: #ff6b6b;
-        font-weight: 600;
-      }
-
-      @media (max-width: 768px) {
-        .container {
-          padding: 20px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        th,
-        td {
-          padding: 8px 4px;
-          font-size: 11px;
-          width: 28px;
-          height: 28px;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+            overflow-y: auto; /* allow whole page to scroll */
         }
-      }
+
+        /* Background video */
+        .video-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        main {
+            background-color: rgba(255, 255, 255, 0.9);
+            width: 1500px;
+            max-width: 95%;
+            padding: 26px 24px 22px;
+            margin: 80px auto 24px; /* below topbar */
+            border-radius: 15px;
+            text-align: left;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            max-height: calc(100vh - 100px); /* keep card within viewport */
+            overflow-y: auto;                /* scroll inside main when very tall */
+        }
+
+        .logo-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+        .logo-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-title img {
+            width: 50px;
+            height: auto;
+        }
+        .logo-title span {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .page-subtitle {
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #4b5563;
+            margin-left: 64px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.5fr);
+            gap: 18px;
+            align-items: flex-start;
+        }
+
+        .input-section,
+        .results-shell {
+            background: rgba(255, 255, 255, 0.96);
+            padding: 16px 16px 18px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+        }
+
+        .input-section {
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+
+        .results-shell {
+            border: 1px solid rgba(129, 140, 248, 0.6);
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #111827;
+            top: 0px;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background-color: #f9fafb;
+            transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background-color: #ffffff;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.18);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .btn-primary-main {
+            flex: 1;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.22s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.2px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            box-shadow: 0 6px 14px rgba(79, 70, 229, 0.35);
+        }
+
+        .btn-primary-main:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary-main {
+            flex: 1;
+            padding: 10px 18px;
+            border-radius: 999px;
+            border: 1px solid #c7d2fe;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #eef2ff;
+            color: #1f2937;
+            box-shadow: 0 2px 6px rgba(148, 163, 184, 0.3);
+            transition: all 0.22s ease;
+        }
+
+        .btn-secondary-main:hover {
+            background-color: #e0e7ff;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 8px 9px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #4f46e5;
+            color: #111827;
+        }
+
+        .results-scroll {
+            max-height: 380px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .table-wrapper {
+            background: #f9fafb;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.4);
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            min-width: 700px;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+        }
+
+        .table th {
+            padding: 9px 8px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 1px solid #d1d5db;
+            color: #111827;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .table td {
+            padding: 8px 8px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #ffffff;
+        }
+
+        .table tbody tr:nth-child(even) td {
+            background-color: #f9fafb;
+        }
+
+        .table-danger {
+            background-color: #fef2f2 !important;
+            color: #b91c1c;
+            font-weight: 600;
+        }
+
+        .table-success {
+            background-color: #ecfdf5 !important;
+            color: #15803d;
+            font-weight: 600;
+        }
+
+        .opacity-50 {
+            opacity: 0.5;
+        }
+
+        .summary {
+            margin-top: 14px;
+            background: #f9fafb;
+            padding: 12px 12px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e5e7eb;
+            font-size: 13px;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            font-weight: 500;
+            color: #4b5563;
+        }
+
+        .summary-value {
+            color: #4f46e5;
+            font-weight: 700;
+        }
+
+        .visually-hidden {
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            main {
+                width: 100%;
+                margin: 80px 10px 24px;
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            main {
+                padding: 18px 14px;
+            }
+            .logo-title span {
+                font-size: 18px;
+            }
+            .content-grid {
+                gap: 14px;
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Page Replacement Algorithm Visualization</h1>
+</head>
+<body>
+    <div id="global-topbar"></div>
 
-      <div class="input-group">
-        <label>Reference String</label>
-        <input
-          type="text"
-          id="refString"
-          value="ex. 7 0 1 2 0 3 0 4 2 3 0 3 0 3 2 1 2 0 1 7 0 1"
-          placeholder="ex. 7 0 1 2 0 3 0 4 2 3 0 3 0 3 2 1 2 0 1 7 0 1" />
-
-        <label>Frame Size</label>
-        <input type="number" id="frameSize" value="3" min="1" max="10" />
-
-        <button onclick="simulate()">Submit</button>
-      </div>
-
-      <div class="results" id="results" style="display: none">
-        <h2>Results</h2>
-        <div class="info">Sequence: <span id="seq"></span></div>
-        <div class="info">Frame Size: <span id="fs"></span></div>
-        <div class="info">Number of References: <span id="numRef"></span></div>
-        <div class="info" style="color: #4a90e2">Blue is the sequence</div>
-        <div class="info" style="color: #ff6b6b">
-          <span class="note-red"
-            >Red is the replaced value when page fault occurs</span
-          >
-        </div>
-
-        <!-- FIFO -->
-        <div class="method">
-          <h3>Method 1: First In First Out (FIFO)</h3>
-          <div class="table-wrapper">
-            <table id="fifo-table"></table>
-          </div>
-          <div class="stats">
-            <div class="stat hits">
-              Number of Hits: <span id="fifo-hits">0</span>
-            </div>
-            <div class="stat faults">
-              Page Faults: <span id="fifo-faults">0</span>
-            </div>
-            <div class="stat">Hit Rate: <span id="fifo-rate">0%</span></div>
-          </div>
-        </div>
-
-        <!-- LRU -->
-        <div class="method">
-          <h3>Method 2: Least Recently Used (LRU)</h3>
-          <div class="table-wrapper">
-            <table id="lru-table"></table>
-          </div>
-          <div class="stats">
-            <div class="stat hits">
-              Number of Hits: <span id="lru-hits">0</span>
-            </div>
-            <div class="stat faults">
-              Page Faults: <span id="lru-faults">0</span>
-            </div>
-            <div class="stat">Hit Rate: <span id="lru-rate">0%</span></div>
-          </div>
-        </div>
-
-        <!-- Optimal -->
-        <div class="method">
-          <h3>Method 3: Optimal</h3>
-          <div class="table-wrapper">
-            <table id="optimal-table"></table>
-          </div>
-          <div class="stats">
-            <div class="stat hits">
-              Number of Hits: <span id="optimal-hits">0</span>
-            </div>
-            <div class="stat faults">
-              Page Faults: <span id="optimal-faults">0</span>
-            </div>
-            <div class="stat">Hit Rate: <span id="optimal-rate">0%</span></div>
-          </div>
-        </div>
-      </div>
+    <!-- Background video -->
+    <div class="video-container">
+        <video autoplay loop muted playsinline>
+            <source src="style/libs/bg.mp4" type="video/mp4">
+        </video>
     </div>
 
+    <main>
+        <div class="logo-title">
+            <div class="logo-left">
+                <img src="style/icons/ams_logo.png" alt="Logo">
+                <span>Page Replacement Solver</span>
+            </div>
+        </div>
+        <p class="page-subtitle">
+            Simulate FIFO, LRU, and Optimal page replacement with schedule table and hit/miss summary.
+        </p>
+
+        <div class="content-grid">
+            <!-- Input Section -->
+            <section class="input-section">
+                <div class="form-group">
+                    <label for="Algorithm">Page replacement algorithm:</label>
+                    <select id="Algorithm">
+                        <option value="fifo">FIFO</option>
+                        <option value="lru">LRU</option>
+                        <option value="optimal">Optimal</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="num-frames">Number of frames:</label>
+                    <input type="number" id="num-frames" value="3" min="1" max="50">
+                </div>
+
+                <div class="form-group">
+                    <label for="ref-string">Reference string:</label>
+                    <input type="text" id="ref-string" placeholder="e.g., 7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1" value="7 0 1 2 0 3 0 4 2 3 0 3 2 1 2 0 1 7 0 1">
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary-main" id="form-btn">Build Schedule</button>
+                    <button class="btn-secondary-main" id="clear-btn">Clear</button>
+                </div>
+
+                <div class="error-message" id="ref-error">Reference string is required</div>
+            </section>
+
+            <!-- Results + Summary -->
+            <section class="results-shell">
+                <div id="result" class="visually-hidden">
+                    <div class="section-title">Schedule table</div>
+                    <div class="results-scroll">
+                        <div class="table-wrapper" id="result-container"></div>
+                    </div>
+                </div>
+
+                <div id="summary" class="visually-hidden">
+                    <div class="section-title" style="margin-top: 12px;">Summary</div>
+                    <div class="summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Number of references:</span>
+                            <span class="summary-value" id="ref">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Algorithm used:</span>
+                            <span class="summary-value" id="algorithm">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Number of frames:</span>
+                            <span class="summary-value" id="frames">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Page hits:</span>
+                            <span class="summary-value" id="hits">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Page faults:</span>
+                            <span class="summary-value" id="faults">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Hit rate:</span>
+                            <span class="summary-value" id="hit_rate">-</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Miss rate:</span>
+                            <span class="summary-value" id="miss_rate">-</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
     <script>
-      function simulate() {
-        const input = document.getElementById("refString").value.trim();
-        const frameSize = parseInt(document.getElementById("frameSize").value);
+        function pageReplacement(algo, reference, num_frames) {
+            if (!['fifo', 'lru', 'optimal'].includes(algo)) {
+                throw new Error('Invalid page replacement algorithm');
+            }
+            if (num_frames < 1) {
+                throw new Error('Num_frames must be greater than 1');
+            }
 
-        if (!input || input.startsWith("ex.")) {
-          alert("Please enter a valid reference string");
-          return;
+            let cache = [];
+            let time_slice = [];
+            let page_fault = [];
+            let queue = [];
+
+            for (let i = 0; i < reference.length; i++) {
+                let page = reference[i];
+
+                if (!cache.includes(page)) {
+                    page_fault.push(1);
+
+                    if (algo === 'fifo') {
+                        queue.push(page);
+                    }
+
+                    if (cache.length < num_frames) {
+                        cache.push(page);
+                    } else {
+                        let victim = cache[0];
+
+                        switch (algo) {
+                            case 'fifo':
+                                victim = queue.shift();
+                                break;
+
+                            case 'lru': {
+                                let lastUseDistances = cache.map(() => Infinity);
+                                for (let k = 0; k < cache.length; k++) {
+                                    const p = cache[k];
+                                    for (let t = i - 1; t >= 0; t--) {
+                                        if (reference[t] === p) {
+                                            lastUseDistances[k] = i - t;
+                                            break;
+                                        }
+                                    }
+                                }
+                                let victimIndex = 0;
+                                let maxDist = -1;
+                                for (let k = 0; k < cache.length; k++) {
+                                    if (lastUseDistances[k] > maxDist) {
+                                        maxDist = lastUseDistances[k];
+                                        victimIndex = k;
+                                    }
+                                }
+                                victim = cache[victimIndex];
+                                break;
+                            }
+
+                            case 'optimal': {
+                                let futureRef = reference.slice(i + 1);
+                                let farthestIndex = -1;
+                                let victimIndex = -1;
+
+                                for (let k = 0; k < cache.length; k++) {
+                                    const p = cache[k];
+                                    const nextUse = futureRef.indexOf(p);
+
+                                    if (nextUse === -1) {
+                                        victimIndex = k;
+                                        farthestIndex = Infinity;
+                                        break;
+                                    }
+                                    if (nextUse > farthestIndex) {
+                                        farthestIndex = nextUse;
+                                        victimIndex = k;
+                                    }
+                                }
+                                victim = cache[victimIndex];
+                                break;
+                            }
+                        }
+
+                        let id = cache.indexOf(victim);
+                        cache.splice(id, 1, page);
+                    }
+                } else {
+                    page_fault.push(0);
+                }
+
+                time_slice.push([...cache]);
+            }
+
+            return { time_slice, page_fault };
         }
 
-        const refString = input.split(/\s+/).map(Number);
-        if (refString.some(isNaN)) {
-          alert("Reference string must contain only numbers");
-          return;
+        function generateTable(reference, num_frames, time_slice, page_fault) {
+            let table = "<table class='table table-bordered'><thead><tr><th>Ref</th>";
+            reference.forEach((ref) => { table += "<th>" + ref + "</th>"; });
+            table += "</tr></thead><tbody>";
+
+            for (let i = 0; i < num_frames; i++) {
+                table += "<tr><td>fr</td>";
+                for (let t = 0; t < time_slice.length; t++) {
+                    let className = "";
+                    if (time_slice[t][i] === reference[t]) {
+                        className = page_fault[t] ? 'table-danger' : 'table-success';
+                    }
+                    table += `<td class="${className}"> ${time_slice[t][i] || ""} </td>`;
+                }
+                table += "</tr>";
+            }
+
+            table += "<tr><td>Hit</td>";
+            page_fault.forEach((miss) => {
+                if (miss) table += "<td><i class='bx bx-x opacity-50'></i></td>";
+                else table += "<td><i class='bx bx-check'></i></td>";
+            });
+            table += "</tr></tbody></table>";
+            return table;
         }
 
-        // Display input info
-        document.getElementById("seq").textContent = refString.join(" ");
-        document.getElementById("fs").textContent = frameSize;
-        document.getElementById("numRef").textContent = refString.length;
-
-        // Run algorithms
-        const fifo = runFIFO(refString, frameSize);
-        const lru = runLRU(refString, frameSize);
-        const optimal = runOptimal(refString, frameSize);
-
-        // Display results
-        displayTable("fifo", fifo, frameSize, refString);
-        displayTable("lru", lru, frameSize, refString);
-        displayTable("optimal", optimal, frameSize, refString);
-
-        document.getElementById("results").style.display = "block";
-      }
-
-      function runFIFO(refString, frameSize) {
-        const frames = [];
-        const queue = [];
-        const history = [];
-        let hits = 0,
-          faults = 0;
-
-        refString.forEach((page) => {
-          if (frames.includes(page)) {
-            hits++;
-            history.push({ frames: [...frames], replaced: null, isHit: true });
-          } else {
-            faults++;
-            let replaced = null;
-            if (frames.length < frameSize) {
-              frames.push(page);
-              queue.push(page);
-            } else {
-              replaced = queue.shift();
-              frames.splice(frames.indexOf(replaced), 1);
-              frames.push(page);
-              queue.push(page);
-            }
-            history.push({ frames: [...frames], replaced, isHit: false });
-          }
-        });
-
-        return { history, hits, faults, total: refString.length };
-      }
-
-      function runLRU(refString, frameSize) {
-        const frames = [];
-        const lastUsed = new Map();
-        const history = [];
-        let hits = 0,
-          faults = 0;
-
-        refString.forEach((page, step) => {
-          if (frames.includes(page)) {
-            hits++;
-            lastUsed.set(page, step);
-            history.push({ frames: [...frames], replaced: null, isHit: true });
-          } else {
-            faults++;
-            let replaced = null;
-            if (frames.length < frameSize) {
-              frames.push(page);
-            } else {
-              let lruPage = frames[0];
-              let minUsed = lastUsed.get(lruPage) || -1;
-              for (let i = 0; i < frames.length; i++) {
-                if ((lastUsed.get(frames[i]) || -1) < minUsed) {
-                  minUsed = lastUsed.get(frames[i]) || -1;
-                  lruPage = frames[i];
-                }
-              }
-              replaced = lruPage;
-              frames.splice(frames.indexOf(lruPage), 1);
-              frames.push(page);
-            }
-            lastUsed.set(page, step);
-            history.push({ frames: [...frames], replaced, isHit: false });
-          }
-        });
-
-        return { history, hits, faults, total: refString.length };
-      }
-
-      function runOptimal(refString, frameSize) {
-        const frames = [];
-        const history = [];
-        let hits = 0,
-          faults = 0;
-
-        refString.forEach((page, step) => {
-          if (frames.includes(page)) {
-            hits++;
-            history.push({ frames: [...frames], replaced: null, isHit: true });
-          } else {
-            faults++;
-            let replaced = null;
-            if (frames.length < frameSize) {
-              frames.push(page);
-            } else {
-              let pageToReplace = frames[0];
-              let maxDistance = -1;
-
-              for (let f of frames) {
-                let nextUse = Infinity;
-                for (let i = step + 1; i < refString.length; i++) {
-                  if (refString[i] === f) {
-                    nextUse = i;
-                    break;
-                  }
-                }
-                if (nextUse > maxDistance) {
-                  maxDistance = nextUse;
-                  pageToReplace = f;
-                }
-              }
-              replaced = pageToReplace;
-              frames.splice(frames.indexOf(pageToReplace), 1);
-              frames.push(page);
-            }
-            history.push({ frames: [...frames], replaced, isHit: false });
-          }
-        });
-
-        return { history, hits, faults, total: refString.length };
-      }
-
-      function displayTable(algo, result, frameSize, refString) {
-        const table = document.getElementById(`${algo}-table`);
-        table.innerHTML = "";
-
-        // Header - reference string
-        const headerRow = document.createElement("tr");
-        refString.forEach((ref, idx) => {
-          const th = document.createElement("th");
-          th.textContent = ref;
-          th.style.background = "#4a90e2";
-          th.style.color = "white";
-          headerRow.appendChild(th);
-        });
-        table.appendChild(headerRow);
-
-        // Frame rows
-        for (let frameIdx = 0; frameIdx < frameSize; frameIdx++) {
-          const row = document.createElement("tr");
-          result.history.forEach((item, idx) => {
-            const td = document.createElement("td");
-            const page = item.frames[frameIdx];
-
-            if (page === undefined) {
-              td.textContent = "-";
-              td.style.color = "#999";
-            } else {
-              td.textContent = page;
-
-              // RED if this page was replaced at this step
-              if (item.replaced !== null && item.replaced === page) {
-                td.classList.add("replaced");
-              }
-            }
-            row.appendChild(td);
-          });
-          table.appendChild(row);
+        function displayTable(reference, num_frames, time_slice, page_fault) {
+            document.getElementById("result").classList.remove("visually-hidden");
+            document.getElementById("result-container").innerHTML =
+                generateTable(reference, num_frames, time_slice, page_fault);
         }
 
-        // Update stats
-        const hitRate = ((result.hits / result.total) * 100).toFixed(2);
-        document.getElementById(`${algo}-hits`).textContent = result.hits;
-        document.getElementById(`${algo}-faults`).textContent = result.faults;
-        document.getElementById(`${algo}-rate`).textContent = hitRate + "%";
-      }
+        function displaySummary(summary_obj) {
+            document.getElementById("summary").classList.remove("visually-hidden");
+            for (const detail in summary_obj) {
+                document.getElementById(detail).innerHTML = summary_obj[detail];
+            }
+        }
+
+        function simulate(e) {
+            e.preventDefault();
+            const algorithm = document.getElementById("Algorithm").value;
+            const ref_string = document.getElementById("ref-string").value.trim();
+            const ref_error = document.getElementById("ref-error");
+            const num_frames = parseInt(document.getElementById("num-frames").value, 10);
+
+            if (ref_string === "") {
+                ref_error.classList.remove("visually-hidden");
+                return;
+            } else {
+                ref_error.classList.add("visually-hidden");
+            }
+
+            try {
+                const tokens = ref_string.split(/\s+/g).filter(t => t.length > 0);
+                const ref_string_array = tokens.map(t => {
+                    const n = Number(t);
+                    if (!Number.isInteger(n)) throw new Error("Invalid input detected");
+                    return String(n);
+                });
+
+                const { time_slice, page_fault } =
+                    pageReplacement(algorithm, ref_string_array, num_frames);
+                displayTable(ref_string_array, num_frames, time_slice, page_fault);
+
+                const faults = page_fault.reduce((acc, curr) => acc + curr, 0);
+                const hits = ref_string_array.length - faults;
+
+                const summary_ = {
+                    ref: ref_string_array.length,
+                    algorithm: algorithm.toUpperCase(),
+                    frames: num_frames,
+                    hits: hits,
+                    faults: faults,
+                    hit_rate: ((hits / ref_string_array.length) * 100).toFixed(2) + '%',
+                    miss_rate: ((faults / ref_string_array.length) * 100).toFixed(2) + '%'
+                };
+
+                displaySummary(summary_);
+            } catch (err) {
+                showNotification("error", "Error", "Invalid input detected");
+            }
+        }
+
+        const framesInput = document.getElementById("num-frames");
+        framesInput.addEventListener("input", () => {
+            let v = framesInput.value.replace(/[^\d]/g, "");
+            if (v === "") {
+                framesInput.value = "";
+                return;
+            }
+            let n = parseInt(v, 10);
+            if (isNaN(n)) {
+                framesInput.value = "";
+                return;
+            }
+            if (n < 1) n = 1;
+            if (n > 50) n = 50;
+            framesInput.value = n;
+        });
+
+        document.getElementById("form-btn").addEventListener("click", simulate);
+        document.getElementById("clear-btn").addEventListener("click", (e) => {
+            e.preventDefault();
+            document.getElementById("result").classList.add("visually-hidden");
+            document.getElementById("summary").classList.add("visually-hidden");
+            document.getElementById("ref-error").classList.add("visually-hidden");
+            document.getElementById("ref-string").value = "";
+        });
     </script>
-  </body>
+    <script src="backend/topbar.js"></script>
+    <script src="backend/notification.js"></script>
+</body>
 </html>
