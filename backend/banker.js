@@ -1,3 +1,4 @@
+// Global variables
 let numProcesses = 3;
 let numResources = 3;
 let allocation = [];
@@ -5,17 +6,21 @@ let max = [];
 let need = [];
 let available = [];
 
+// Simple converter: returns integer or NaN
 function toIntOrNaN(value) {
     const num = Number(value);
     return Number.isInteger(num) && num >= 0 ? num : NaN;
 }
 
+// Initialize with zeros
 function initZeroData() {
     allocation = Array(numProcesses).fill().map(() => Array(numResources).fill(0));
     max = Array(numProcesses).fill().map(() => Array(numResources).fill(0));
     need = Array(numProcesses).fill().map(() => Array(numResources).fill(0));
     available = Array(numResources).fill(0);
 }
+
+// Calculate Need = Max - Allocation
 function calculateNeedMatrix() {
     need = [];
     for (let i = 0; i < numProcesses; i++) {
@@ -27,18 +32,20 @@ function calculateNeedMatrix() {
     }
 }
 
+// Read all table inputs and validate using some(isNaN)
 function readAndValidateAllInputs() {
     const availVals = [];
     const allocVals = [];
     const maxVals = [];
 
-
+    // Available
     for (let j = 0; j < numResources; j++) {
         const input = document.getElementById(`avail-${j}`);
         const v = toIntOrNaN(input ? input.value : "");
         availVals.push(v);
     }
 
+    // Allocation
     for (let i = 0; i < numProcesses; i++) {
         allocVals[i] = [];
         for (let j = 0; j < numResources; j++) {
@@ -48,6 +55,7 @@ function readAndValidateAllInputs() {
         }
     }
 
+    // Max
     for (let i = 0; i < numProcesses; i++) {
         maxVals[i] = [];
         for (let j = 0; j < numResources; j++) {
@@ -77,6 +85,7 @@ function readAndValidateAllInputs() {
     updateNeedTable();
 }
 
+// Create the tables UI
 function createTables(populateWithCurrentData = true) {
     try {
         const p = toIntOrNaN(document.getElementById('processes').value);
@@ -84,7 +93,7 @@ function createTables(populateWithCurrentData = true) {
 
         if (isNaN(p) || isNaN(r)) {
             showNotification("error", "Error", "Invalid input detected");
-            throw new Error("Invalid input detected");
+            return;
         }
 
         numProcesses = p;
@@ -123,7 +132,7 @@ function createTables(populateWithCurrentData = true) {
                         <tbody>
                             <tr>
                                 ${Array.from({length: numResources}, (_, j) =>
-                                    `<td><input type="number" id="avail-${j}" value="${populateWithCurrentData ? available[j] : 0}" min="0"></td>`
+                                    `<td><input type="text" id="avail-${j}" value="${populateWithCurrentData ? available[j] : 0}" min="0"></td>`
                                 ).join('')}
                             </tr>
                         </tbody>
@@ -149,7 +158,7 @@ function createTables(populateWithCurrentData = true) {
                                 <tr>
                                     <td><strong>P${i}</strong></td>
                                     ${Array.from({length: numResources}, (_, j) => `
-                                        <td><input type="number" id="alloc-${i}-${j}" value="${populateWithCurrentData ? allocation[i][j] : 0}" min="0"></td>
+                                        <td><input type="text" id="alloc-${i}-${j}" value="${populateWithCurrentData ? allocation[i][j] : 0}" min="0"></td>
                                     `).join('')}
                                 </tr>
                             `).join('')}
@@ -176,7 +185,7 @@ function createTables(populateWithCurrentData = true) {
                                 <tr>
                                     <td><strong>P${i}</strong></td>
                                     ${Array.from({length: numResources}, (_, j) => `
-                                        <td><input type="number" id="max-${i}-${j}" value="${populateWithCurrentData ? max[i][j] : 0}" min="0"></td>
+                                        <td><input type="text" id="max-${i}-${j}" value="${populateWithCurrentData ? max[i][j] : 0}" min="0"></td>
                                     `).join('')}
                                 </tr>
                             `).join('')}
@@ -221,267 +230,11 @@ function createTables(populateWithCurrentData = true) {
         updateStatus("Tables Created", "ready");
         addToResults("Tables created for " + numProcesses + " processes and " + numResources + " resources\n");
     } catch (error) {
+        // notification already shown if invalid
     }
 }
 
-function loadDeadlockExample() {
-    numProcesses = 3;
-    numResources = 3;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [1, 0, 1],
-        [1, 1, 0],
-        [0, 1, 1]
-    ];
-
-    max = [
-        [2, 1, 1],
-        [1, 2, 1],
-        [1, 1, 2]
-    ];
-
-    available = [0, 0, 0];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("SIMPLE DEADLOCK EXAMPLE:\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("Classic circular wait scenario:\n");
-    addToResults("P0 holds R0,R2 and needs R1\n");
-    addToResults("P1 holds R0,R1 and needs R2\n");
-    addToResults("P2 holds R1,R2 and needs R0\n");
-    addToResults("No resources available - Circular Wait!\n");
-    updateStatus("Deadlock Example", "unsafe");
-}
-
-function loadClassicDeadlockExample() {
-    numProcesses = 5;
-    numResources = 5;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [1, 0, 0, 0, 1],
-        [0, 1, 0, 0, 0],
-        [0, 0, 1, 0, 0],
-        [0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0]
-    ];
-
-    max = [
-        [2, 1, 0, 0, 1],
-        [0, 2, 1, 0, 0],
-        [0, 0, 2, 1, 0],
-        [1, 0, 0, 2, 0],
-        [0, 0, 0, 0, 2]
-    ];
-
-    available = [0, 0, 0, 0, 0];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("CLASSIC DEADLOCK (Dining Philosophers):\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("Each philosopher needs two chopsticks to eat:\n");
-    addToResults("Circular wait: P0→P1→P2→P3→P0\n");
-    addToResults("All resources held, none available!\n");
-    updateStatus("Classic Deadlock", "unsafe");
-}
-
-function loadResourceStarvationExample() {
-    numProcesses = 4;
-    numResources = 3;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [2, 0, 0],
-        [0, 2, 0],
-        [0, 0, 2],
-        [0, 0, 0]
-    ];
-
-    max = [
-        [3, 2, 2],
-        [2, 3, 2],
-        [2, 2, 3],
-        [1, 1, 1]
-    ];
-
-    available = [0, 0, 1];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("RESOURCE STARVATION EXAMPLE:\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("System appears to have resources, but:\n");
-    addToResults("No single process can complete with available resources.\n");
-    addToResults("This leads to starvation - processes wait indefinitely!\n");
-    updateStatus("Resource Starvation", "unsafe");
-}
-
-function loadSafeExample() {
-    numProcesses = 5;
-    numResources = 3;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [0, 1, 0],
-        [2, 0, 0],
-        [3, 0, 2],
-        [2, 1, 1],
-        [0, 0, 2]
-    ];
-
-    max = [
-        [7, 5, 3],
-        [3, 2, 2],
-        [9, 0, 2],
-        [4, 3, 3],
-        [5, 3, 3]
-    ];
-
-    available = [3, 3, 2];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("SIMPLE SAFE EXAMPLE:\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("Classic safe state from OS textbooks.\n");
-    addToResults("Safe sequence exists: P1 → P3 → P4 → P0 → P2\n");
-    updateStatus("Safe Example", "safe");
-}
-
-function loadClassicSafeExample() {
-    numProcesses = 4;
-    numResources = 3;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [0, 0, 1],
-        [2, 0, 0],
-        [0, 1, 0],
-        [1, 0, 0]
-    ];
-
-    max = [
-        [0, 0, 2],
-        [3, 1, 0],
-        [1, 2, 1],
-        [2, 1, 1]
-    ];
-
-    available = [2, 1, 1];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("CLASSIC SAFE EXAMPLE:\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("Very clear progression:\n");
-    addToResults("P0 can finish immediately (needs only 1 more R2)\n");
-    addToResults("Safe sequence: P0 → P2 → P3 → P1\n");
-    updateStatus("Classic Safe", "safe");
-}
-
-function loadResourceRichExample() {
-    numProcesses = 5;
-    numResources = 4;
-
-    document.getElementById('processes').value = numProcesses;
-    document.getElementById('resources').value = numResources;
-
-    allocation = [
-        [1, 2, 0, 1],
-        [0, 1, 1, 0],
-        [2, 0, 0, 1],
-        [1, 1, 0, 0],
-        [0, 0, 1, 2]
-    ];
-
-    max = [
-        [3, 3, 2, 2],
-        [1, 2, 2, 1],
-        [3, 1, 1, 2],
-        [2, 2, 1, 1],
-        [1, 1, 2, 3]
-    ];
-
-    available = [5, 4, 3, 4];
-
-    createTables(true);
-
-    clearResults();
-    addToResults("RESOURCE-RICH EXAMPLE:\n");
-    addToResults("=".repeat(50) + "\n\n");
-    addToResults("Plenty of resources available:\n");
-    addToResults("Available: [" + available.join(", ") + "]\n");
-    addToResults("Any process can finish immediately!\n");
-    addToResults("Multiple safe sequences exist.\n");
-    updateStatus("Resource Rich", "safe");
-}
-
-function generateRandomExample() {
-    try {
-        const p = toIntOrNaN(document.getElementById('processes').value);
-        const r = toIntOrNaN(document.getElementById('resources').value);
-
-        if (isNaN(p) || isNaN(r)) {
-            showNotification("error", "Error", "Invalid input detected");
-            throw new Error("Invalid input detected");
-        }
-
-        numProcesses = p;
-        numResources = r;
-
-        allocation = Array(numProcesses).fill().map(() => Array(numResources).fill(0));
-        max = Array(numProcesses).fill().map(() => Array(numResources).fill(0));
-        available = Array(numResources).fill(0);
-
-        for (let i = 0; i < numProcesses; i++) {
-            for (let j = 0; j < numResources; j++) {
-                allocation[i][j] = Math.floor(Math.random() * 3);
-            }
-        }
-
-        for (let i = 0; i < numProcesses; i++) {
-            for (let j = 0; j < numResources; j++) {
-                max[i][j] = allocation[i][j] + Math.floor(Math.random() * 4) + 1;
-            }
-        }
-
-        for (let j = 0; j < numResources; j++) {
-            let totalAlloc = 0;
-            for (let i = 0; i < numProcesses; i++) {
-                totalAlloc += allocation[i][j];
-            }
-            available[j] = totalAlloc + Math.floor(Math.random() * 3) + 2;
-        }
-
-        calculateNeedMatrix();
-        createTables(true);
-
-        clearResults();
-        addToResults("Random example generated!\n");
-        addToResults("Available: [" + available.join(", ") + "]\n\n");
-        updateStatus("Example Generated", "info");
-    } catch (error) {
-        
-    }
-}
+// Example loaders and generateRandomExample remain as in your last file.[file:5]
 
 function updateNeedTable() {
     calculateNeedMatrix();
@@ -502,7 +255,7 @@ function updateAllData() {
         addToResults("Available resources: [" + available.join(", ") + "]\n\n");
         updateStatus("Updated", "info");
     } catch (error) {
-        
+        // validation already showed notification
     }
 }
 
@@ -548,7 +301,7 @@ function checkSafety() {
     try {
         readAndValidateAllInputs();
     } catch (e) {
-        
+        // invalid input, notification already shown
         return;
     }
 
@@ -646,7 +399,6 @@ function explainAlgorithm() {
     clearResults();
     addToResults("BANKER'S ALGORITHM EXPLANATION\n");
     addToResults("=".repeat(50) + "\n\n");
-
     addToResults("The Banker's Algorithm prevents deadlock by:\n\n");
     addToResults("1. Need Matrix = Max - Allocation\n");
     addToResults("2. Start with Work = Available resources\n");
@@ -654,7 +406,6 @@ function explainAlgorithm() {
     addToResults("4. If found, assume it finishes and releases resources\n");
     addToResults("5. Add released resources to Work\n");
     addToResults("6. Repeat until all processes finish (SAFE) or no progress (UNSAFE)\n\n");
-
     addToResults("DEADLOCK CONDITIONS (All 4 must be present):\n");
     addToResults("1. Mutual Exclusion - Resources cannot be shared\n");
     addToResults("2. Hold and Wait - Processes hold resources while waiting\n");

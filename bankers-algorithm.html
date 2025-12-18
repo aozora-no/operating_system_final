@@ -1,110 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Banker's Algorithm Simulator</title>
-    <link rel="stylesheet" href="style/login.css">
-    <link rel="icon" type="image/png" href="style/icons/top_logo.png">
-    <link rel="stylesheet" href="style/notification.css">
-    <link rel="stylesheet" href="style/topbar.css">
-    <link rel="stylesheet" href="style/banker.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style/login.css" />
+    <link rel="icon" type="image/png" href="style/icons/top_logo.png" />
+    <link rel="stylesheet" href="style/notification.css" />
+    <link rel="stylesheet" href="style/topbar.css" />
+    <link rel="stylesheet" href="style/banker.css" />
+  </head>
+  <body>
     <div id="global-topbar"></div>
 
     <div class="video-container">
-        <video autoplay loop muted playsinline>
-            <source src="style/libs/bg.mp4" type="video/mp4">
-        </video>
+      <video autoplay loop muted playsinline>
+        <source src="style/libs/bg.mp4" type="video/mp4" />
+      </video>
     </div>
 
     <main>
-        <div class="logo-title">
-            <img src="style/icons/ams_logo.png" alt="Logo">
-            <span>Banker's Algorithm Simulator</span>
+      <div class="logo-title">
+        <img src="style/icons/ams_logo.png" alt="Logo" />
+        <span>Banker's Algorithm Simulator</span>
+      </div>
+      <p class="subtitle">
+        Deadlock prevention simulator with Max, Allocation, Need, and safety
+        sequence.
+      </p>
+
+      <section class="status-setup-wrapper">
+        <div class="status-bar">
+          <span class="label">Status:</span>
+          <div id="status" class="status-label status-ready">READY</div>
+          <div id="status-message">Enter system configuration to begin</div>
         </div>
-        <p class="subtitle">Deadlock prevention simulator with Max, Allocation, Need, and safety sequence.</p>
 
-        <section class="status-setup-wrapper">
-            <div class="status-bar">
-                <span class="label">Status:</span>
-                <div id="status" class="status-label status-ready">READY</div>
-                <div id="status-message">Enter system configuration to begin</div>
+        <div class="setup-section">
+          <div class="setup-row">
+            <div class="input-group">
+              <label>Processes:</label>
+              <!-- changed to text so letters reach validation -->
+              <input type="text" id="processes" min="1" max="10" value="3" />
             </div>
-
-            <div class="setup-section">
-                <div class="setup-row">
-                    <div class="input-group">
-                        <label>Processes:</label>
-                        <input type="number" id="processes" min="1" max="10" value="3">
-                    </div>
-                    <div class="input-group">
-                        <label>Resources:</label>
-                        <input type="number" id="resources" min="1" max="8" value="3">
-                    </div>
-                    <button class="btn btn-primary" onclick="createTables()">Create Tables</button>
-                    <button class="btn btn-info" onclick="generateRandomExample()">Random Example</button>
-                </div>
-
-                <div class="setup-row">
-                    <div class="example-buttons" style="width: 100%; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 300px;">
-                            <span style="font-weight: 600; color: #495057;">Safe Examples:</span>
-                            <button class="btn btn-success example-btn-small" onclick="loadSafeExample()">Simple Safe</button>
-                            <button class="btn btn-success example-btn-small" onclick="loadClassicSafeExample()">Classic Safe</button>
-                            <button class="btn btn-success example-btn-small" onclick="loadResourceRichExample()">Resource Rich</button>
-                        </div>
-
-                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 300px;">
-                            <span style="font-weight: 600; color: #495057;">Deadlock Examples:</span>
-                            <button class="btn btn-danger example-btn-small" onclick="loadDeadlockExample()">Simple Deadlock</button>
-                            <button class="btn btn-danger example-btn-small" onclick="loadClassicDeadlockExample()">Classic Deadlock</button>
-                            <button class="btn btn-danger example-btn-small" onclick="loadResourceStarvationExample()">Resource Starvation</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="input-group">
+              <label>Resources:</label>
+              <!-- changed to text -->
+              <input type="text" id="resources" min="1" max="8" value="3" />
             </div>
+            <button class="btn btn-primary" onclick="createTables()">
+              Create Tables
+            </button>
+            <button class="btn btn-info" onclick="generateRandomExample()">
+              Random Example
+            </button>
+          </div>
+
+          <div class="setup-row">
+            <div
+              class="example-buttons"
+              style="width: 100%; justify-content: space-between">
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  flex-wrap: wrap;
+                  width: 300px;
+                ">
+                <span style="font-weight: 600; color: #495057"
+                  >Safe Examples:</span
+                >
+                <button
+                  class="btn btn-success example-btn-small"
+                  onclick="loadSafeExample()">
+                  Simple Safe
+                </button>
+                <button
+                  class="btn btn-success example-btn-small"
+                  onclick="loadClassicSafeExample()">
+                  Classic Safe
+                </button>
+                <button
+                  class="btn btn-success example-btn-small"
+                  onclick="loadResourceRichExample()">
+                  Resource Rich
+                </button>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  flex-wrap: wrap;
+                  width: 300px;
+                ">
+                <span style="font-weight: 600; color: #495057"
+                  >Deadlock Examples:</span
+                >
+                <button
+                  class="btn btn-danger example-btn-small"
+                  onclick="loadDeadlockExample()">
+                  Simple Deadlock
+                </button>
+                <button
+                  class="btn btn-danger example-btn-small"
+                  onclick="loadClassicDeadlockExample()">
+                  Classic Deadlock
+                </button>
+                <button
+                  class="btn btn-danger example-btn-small"
+                  onclick="loadResourceStarvationExample()">
+                  Resource Starvation
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-grid">
+        <section class="tables-section">
+          <h2>System State</h2>
+          <div class="tables-container" id="tables-container">
+            <!-- Tables generated by createTables() -->
+          </div>
+          <div class="tables-actions">
+            <button class="btn btn-success" onclick="updateAllData()">
+              Update All Tables
+            </button>
+          </div>
         </section>
 
-        <div class="content-grid">
-            <section class="tables-section">
-                <h2>System State</h2>
-                <div class="tables-container" id="tables-container">
-                </div>
-                <div class="tables-actions">
-                    <button class="btn btn-success" onclick="updateAllData()">Update All Tables</button>
-                </div>
-            </section>
-
-            <section class="results-section">
-                <div class="results-header">
-                    <h2>Algorithm Results</h2>
-                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" onclick="clearResults()">Clear Results</button>
-                        <button class="btn btn-warning" onclick="explainAlgorithm()">Explain Algorithm</button>
-                    </div>
-                </div>
-                <div class="results-output" id="results-output">
-Welcome to Banker's Algorithm Simulator!
-
-Instructions:
-1. Enter number of processes and resources
-2. Click "Create Tables"
-3. Enter values in the tables
-4. Click "Update All Tables"
-5. Click "Check Safe State" to run the algorithm... Need = Max - Allocation (calculated automatically)
-
-Use example buttons to load different scenarios!
-                </div>
-                <div class="results-actions">
-                    <button class="btn btn-success" onclick="checkSafety()">Check Safe State</button>
-                </div>
-            </section>
-        </div>
+        <section class="results-section">
+          <div class="results-header">
+            <h2>Algorithm Results</h2>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap">
+              <button class="btn btn-secondary" onclick="clearResults()">
+                Clear Results
+              </button>
+              <button class="btn btn-warning" onclick="explainAlgorithm()">
+                Explain Algorithm
+              </button>
+            </div>
+          </div>
+          <div class="results-output" id="results-output">
+            Welcome to Banker's Algorithm Simulator! Instructions: 1. Enter
+            number of processes and resources 2. Click "Create Tables" 3. Enter
+            values in the tables 4. Click "Update All Tables" 5. Click "Check
+            Safe State" to run the algorithm... Need = Max - Allocation
+            (calculated automatically) Use example buttons to load different
+            scenarios!
+          </div>
+          <div class="results-actions">
+            <button class="btn btn-success" onclick="checkSafety()">
+              Check Safe State
+            </button>
+          </div>
+        </section>
+      </div>
     </main>
+
+    <script></script>
     <script src="backend/notification.js"></script>
     <script src="backend/topbar.js"></script>
     <script src="backend/banker.js"></script>
-
-</body>
+  </body>
 </html>
