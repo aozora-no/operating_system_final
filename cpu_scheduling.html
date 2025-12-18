@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style/notification.css" />
     <link rel="stylesheet" href="style/topbar.css">
     <style>
-      /* Page background and centering (same eel as OSAlgorith Simulator) */
+      /* Page background and centering (same eel as OSAlgorithm Simulator) */
       body {
         position: absolute;
         left: 0;
@@ -93,6 +93,12 @@
         margin: 0 0 10px;
         font-size: 16px;
       }
+
+      /* Scrollable container for the input table */
+      .table-container {
+        max-height: 220px;
+        overflow-y: auto;
+      } /* [web:22][web:26] */
 
       /* Input table styling */
       #inputTable {
@@ -205,6 +211,12 @@
         text-align: left;
       }
 
+      /* Scrollable container for Gantt + results */
+      .results-container {
+        max-height: 370px;
+        overflow-y: auto;
+      } /* [web:39][web:47] */
+
       /* Results table styling */
       #resultsTable {
         width: 100%;
@@ -279,33 +291,35 @@
         <!-- LEFT: Input panel -->
         <section class="panel">
           <h3>Process Details</h3>
-          <table id="inputTable">
-            <tr>
-              <th>Process</th>
-              <th>Arrival Time</th>
-              <th>Burst Time</th>
-            </tr>
-            <tr>
-              <td>P1</td>
-              <td><input type="number" class="at" value="0" /></td>
-              <td><input type="number" class="bt" value="0" /></td>
-            </tr>
-            <tr>
-              <td>P2</td>
-              <td><input type="number" class="at" value="0" /></td>
-              <td><input type="number" class="bt" value="0" /></td>
-            </tr>
-            <tr>
-              <td>P3</td>
-              <td><input type="number" class="at" value="0" /></td>
-              <td><input type="number" class="bt" value="0" /></td>
-            </tr>
-            <tr>
-              <td>P4</td>
-              <td><input type="number" class="at" value="0" /></td>
-              <td><input type="number" class="bt" value="0" /></td>
-            </tr>
-          </table>
+          <div class="table-container">
+            <table id="inputTable">
+              <tr>
+                <th>Process</th>
+                <th>Arrival Time</th>
+                <th>Burst Time</th>
+              </tr>
+              <tr>
+                <td>P1</td>
+                <td><input type="number" class="at" value="0" /></td>
+                <td><input type="number" class="bt" value="0" /></td>
+              </tr>
+              <tr>
+                <td>P2</td>
+                <td><input type="number" class="at" value="0" /></td>
+                <td><input type="number" class="bt" value="0" /></td>
+              </tr>
+              <tr>
+                <td>P3</td>
+                <td><input type="number" class="at" value="0" /></td>
+                <td><input type="number" class="bt" value="0" /></td>
+              </tr>
+              <tr>
+                <td>P4</td>
+                <td><input type="number" class="at" value="0" /></td>
+                <td><input type="number" class="bt" value="0" /></td>
+              </tr>
+            </table>
+          </div>
 
           <div class="btn-row">
             <button class="secondary" onclick="addProcess()">
@@ -324,14 +338,16 @@
 
         <!-- RIGHT: Gantt + Results -->
         <section class="panel">
-          <div class="gantt-wrapper">
-            <div class="gantt-header">Gantt Chart</div>
-            <div id="ganttChart"></div>
-            <div id="timeScale"></div>
-          </div>
+          <div class="results-container">
+            <div class="gantt-wrapper">
+              <div class="gantt-header">Gantt Chart</div>
+              <div id="ganttChart"></div>
+              <div id="timeScale"></div>
+            </div>
 
-          <div class="results-header">Results Table</div>
-          <table id="resultsTable"></table>
+            <div class="results-header">Results Table</div>
+            <table id="resultsTable"></table>
+          </div>
         </section>
       </div>
     </main>
@@ -340,6 +356,13 @@
       /* -------- ADD / REMOVE -------- */
       function addProcess() {
         const table = document.getElementById("inputTable");
+        const maxRows = 21; // 1 header + 20 processes [web:6]
+
+        if (table.rows.length >= maxRows) {
+          showNotification("error", "Error", "Maximum of 20 processes reached");
+          return;
+        }
+
         const rowCount = table.rows.length;
         const row = table.insertRow();
         row.innerHTML = `
